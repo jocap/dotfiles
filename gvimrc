@@ -2,6 +2,13 @@ set guicursor+=a:blinkon0 " disable cursor blinking
 set transparency=1
 set guioptions=aAce
 set guifont=Linefeed:h12
+
+set list
+set listchars=tab:▸\ ,eol:¬
+set number
+set ruler
+
+syntax on
 colorscheme less
 
 " Search highlighting and preferences:
@@ -9,18 +16,6 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
-
-" Activate folding:
-set foldmethod=marker " {{{}}}
-
-" Activate line numbers and rulers:
-set number ruler
-
-" Use the same symbols as TextMate for tabstops and EOLs:
-set list
-set listchars=tab:▸\ ,eol:¬
-" Shortcut to rapidly toggle `set list`:
-nmap <leader>l :set list!<CR>
 
 " Spaces & tabs:
 set ts=2 sts=2 sw=2 expandtab
