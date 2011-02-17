@@ -27,16 +27,18 @@ hi Directory  guifg=#b35e4d guibg=NONE gui=NONE
 hi Folded  guifg=#3f89da guibg=#111413 gui=NONE
 
 hi phpVarSelector guifg=#738c73 guibg=NONE gui=NONE
-hi phpSuperglobal guifg=#738c73 guibg=NONE gui=NONE
-hi phpQuoteDouble guifg=#bcd279 guibg=NONE gui=NONE
-hi phpQuoteSingle guifg=#bcd279 guibg=NONE gui=NONE
+hi link phpSuperglobal phpVarSelector
+hi link phpQuoteDouble String
+hi link phpStringDouble String
+hi link phpQuoteSingle String
+hi link phpStringDouble String
 hi Identifier guifg=#738c73 guibg=NONE gui=NONE
 hi phpDefineMethodName guifg=#6691a0 guibg=NONE gui=NONE
 hi phpDefineFuncName guifg=#6691a0 guibg=NONE gui=NONE
-hi phpSpecialMethods guifg=#b35e4d guibg=NONE gui=NONE
 hi phpDefineMethod guifg=NONE guibg=NONE gui=NONE
 hi phpDefine guifg=NONE guibg=NONE gui=NONE
 hi phpFunctions guifg=#b35e4d guibg=NONE gui=NONE
+hi link phpSpecialMethods phpFunctions
 hi phpSemicolon guifg=NONE guibg=NONE gui=NONE
 
 hi Normal  guifg=#ebefe7 guibg=#111413 gui=NONE

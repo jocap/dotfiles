@@ -4,6 +4,11 @@ call pathogen#helptags()
 
 let mapleader = ","
 
+if has("autocmd")
+    autocmd FileType python set ft=python.django " For SnipMate
+    autocmd FileType html set ft=htmldjango.html " For SnipMate
+endif
+
 " Activate folding:
 set foldmethod=marker " {{{}}}
 
@@ -18,3 +23,13 @@ endif
 
 " Shortcut to rapidly toggle `set list`:
 nmap <leader>l :set list!<CR>
+" Show syntax highlighting groups for word under cursor
+nmap <C-S-P> :call <SID>SynStack()<CR>
+
+" Reveal the highlight 'name'
+function! <SID>SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
