@@ -15,6 +15,20 @@ set foldmethod=marker " {{{}}}
 " Wrap command:
 command! -nargs=* Wrap set wrap linebreak nolist showbreak=…
 
+command! -nargs=* E e %:p:h/<args>
+
+if executable("par")
+    command! -nargs=* Par set formatprg=par\ -w50\ -j\ -q
+endif
+
+if has("autocmd")
+    filetype on
+    if executable("par")
+        autocmd FileType markdown,textile,mail Par()
+    endif
+    autocmd FileType markdown,textile imap <C-S-Z> <Esc>gqip<S-A>
+endif
+
 " Remember last location in file
 if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
