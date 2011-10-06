@@ -1,3 +1,8 @@
+if &term =~ "xterm"
+    " don't do this if you have 8-color xterms
+    set term=xterm-16color
+endif
+
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 " (http://vimcasts.org/e/27
@@ -39,6 +44,9 @@ endif
 nmap <leader>l :set list!<CR>
 " Show syntax highlighting groups for word under cursor
 nmap <C-S-P> :call <SID>SynStack()<CR>
+" ^ and $
+nmap - ^
+nmap + $
 
 " Reveal the highlight 'name'
 function! <SID>SynStack()
@@ -47,3 +55,22 @@ function! <SID>SynStack()
   endif
   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
+
+function! Smart_TabComplete()
+  let line = getline('.')                         " curline
+  let substr = strpart(line, -1, col('.')+1)      " from start to cursor
+  let substr = matchstr(substr, "[^ \t]*$")       " word till cursor
+  if (strlen(substr)==0)                          " nothing to match on empty string
+    return "\<tab>"
+  endif
+  let has_period = match(substr, '\.') != -1      " position of period, if any
+  let has_slash = match(substr, '\/') != -1       " position of slash, if any
+  if (!has_period && !has_slash)
+    return "\<C-X>\<C-P>"                         " existing text matching
+  elseif ( has_slash )
+    return "\<C-X>\<C-F>"                         " file matching
+  else
+    return "\<C-X>\<C-O>"                         " plugin matching
+  endif
+endfunction
+inoremap <tab> <c-r>=Smart_TabComplete()<CR>

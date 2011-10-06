@@ -1,5 +1,5 @@
 set guicursor+=a:blinkon0 " disable cursor blinking
-set transparency=1
+"set transparency=1
 set guioptions=aAce
 set guifont=Menlo:h12
 
@@ -11,8 +11,10 @@ set ruler
 set smartindent
 set autoindent
 
+set term=xterm-256color
+
 syntax on
-colorscheme less
+colorscheme default
 
 " Search highlighting and preferences:
 set hlsearch
