@@ -1,9 +1,3 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =7
-let g:netrw_dirhist_1='/Users/john/.zsh/load/fn'
-let g:netrw_dirhist_2='/Users/john/.zsh'
-let g:netrw_dirhist_3='/Users/john/.zsh/load'
-let g:netrw_dirhist_4='/Users/john/.zsh'
-let g:netrw_dirhist_5='/Users/john/.zsh/load/fn'
-let g:netrw_dirhist_6='/Users/john/.zsh'
-let g:netrw_dirhist_7='/Users/john/.zsh/load'
+let g:netrw_dirhist_cnt =1
+let g:netrw_dirhist_1='/Users/john/.zsh/load'
