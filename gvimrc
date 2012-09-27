@@ -14,7 +14,7 @@ set autoindent
 set term=xterm-256color
 
 syntax on
-colorscheme default
+colorscheme bclear
 
 " Search highlighting and preferences:
 set hlsearch
@@ -46,6 +46,7 @@ if has("autocmd")
     autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab
     autocmd FileType javascript setlocal ts=4 sts=4 sw=4 noexpandtab
     autocmd FileType php setlocal ts=2 sts=2 sw=2 expandtab
+    autocmd FileType hs setlocal ts=2 sts=2 sw=2 expandtab
 
     " Change to font that supports bold and italic styles for
     " Markdown and Textile files:
