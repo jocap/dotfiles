@@ -14,7 +14,7 @@ set autoindent
 set term=xterm-256color
 
 syntax on
-colorscheme bclear
+colorscheme xemacs
 
 " Search highlighting and preferences:
 set hlsearch
