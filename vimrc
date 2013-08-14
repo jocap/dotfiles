@@ -86,14 +86,16 @@ function! NumberToggle()
   endif
 endfunc
 
-nnoremap <C-n> :call NumberToggle()<cr>
+if exists("+relativenumber")
+    nnoremap <C-n> :call NumberToggle()<cr>
 
-:au FocusLost * :set number
-:au FocusGained * :set relativenumber
+    :au FocusLost * :set number
+    :au FocusGained * :set relativenumber
 
-if has("autocmd")
-    autocmd InsertEnter * :set number
-    autocmd InsertLeave * :set relativenumber
+    if has("autocmd")
+        autocmd InsertEnter * :set number
+        autocmd InsertLeave * :set relativenumber
+    endif
 endif
 
 if has("autocmd")

@@ -5,8 +5,13 @@ set guifont=Menlo:h12
 
 set list
 set listchars=tab:▸\ ,eol:¬
-set relativenumber
 set ruler
+
+if exists("+relativenumber")
+    set relativenumber
+else
+    set number
+endif
 
 set smartindent
 set autoindent
@@ -14,7 +19,7 @@ set autoindent
 set term=xterm-256color
 
 syntax on
-colorscheme leo
+colorscheme kellys
 
 " Search highlighting and preferences:
 set hlsearch
