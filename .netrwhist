@@ -1,3 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
-let g:netrw_dirhist_1='/Users/john/.zsh/load'
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/Users/john/personal/programming/websites/jocap.bitbucket.org'
+let g:netrw_dirhist_2='/Users/john/.vim'
+let g:netrw_dirhist_3='/Users/john/Personal/programming/perl/present_pl/source'
+let g:netrw_dirhist_4='/Users/john/Personal/programming/websites/jocap.github.com'
+let g:netrw_dirhist_5='/Users/john/Personal/programming/websites/jocap.github.com/blog'
+let g:netrw_dirhist_6='/Users/john/Personal/programming/websites/jocap.github.com/blog/media'

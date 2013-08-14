@@ -14,7 +14,7 @@ set autoindent
 set term=xterm-256color
 
 syntax on
-colorscheme xemacs
+colorscheme leo
 
 " Search highlighting and preferences:
 set hlsearch
@@ -30,32 +30,8 @@ if has("gui_macvim")
     set fuoptions=maxhorz,maxvert
 endif
 
-" Only do this part when compiled with support for autocommands
 if has("autocmd")
-    " Enable file type detection
-    filetype on
- 
-    " Syntax of these languages is fussy over tabs vs spaces
-    autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
-    autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType haml setlocal ts=2 sts=2 sw=2 expandtab
- 
-    " Customisations based on house-style (arbitrary)
-    autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType css setlocal ts=4 sts=4 sw=4 expandtab
-    autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab
-    autocmd FileType javascript setlocal ts=4 sts=4 sw=4 noexpandtab
-    autocmd FileType php setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType haskell setlocal ts=2 sts=2 sw=2 expandtab
-
     " Change to font that supports bold and italic styles for
     " Markdown and Textile files:
     autocmd FileType markdown,textile setlocal guifont=Menlo:h12
-
-    " Treat .rss files as XML
-    autocmd BufNewFile,BufRead *.rss setfiletype xml
-    " Highlight .less files as CSS
-    autocmd BufRead,BufNewFile *.less,*.css setfiletype css
-
-    autocmd BufRead,BufNewFile *.haml set ft=haml
 endif

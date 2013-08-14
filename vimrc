@@ -1,3 +1,5 @@
+set cpo+=J " For double spacing after periods
+
 if &term =~ "xterm"
     " don't do this if you have 8-color xterms
     set term=xterm-16color
@@ -10,6 +12,7 @@ call pathogen#helptags()
 let mapleader = ","
 
 if has("autocmd")
+    filetype on
     autocmd FileType python set ft=python.django " For SnipMate
     autocmd FileType html set ft=htmldjango.html " For SnipMate
 endif
@@ -27,7 +30,6 @@ if executable("par")
 endif
 
 if has("autocmd")
-    filetype on
     if executable("par")
         autocmd FileType markdown,textile,mail Par()
     endif
@@ -74,3 +76,43 @@ function! Smart_TabComplete()
   endif
 endfunction
 inoremap <tab> <c-r>=Smart_TabComplete()<CR>
+
+" Toggle relative line numers
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set number
+  else
+    set relativenumber
+  endif
+endfunc
+
+nnoremap <C-n> :call NumberToggle()<cr>
+
+:au FocusLost * :set number
+:au FocusGained * :set relativenumber
+
+if has("autocmd")
+    autocmd InsertEnter * :set number
+    autocmd InsertLeave * :set relativenumber
+endif
+
+if has("autocmd")
+
+    " Treat .rss files as XML
+    autocmd BufNewFile,BufRead *.rss setfiletype xml
+    " Highlight .less files as CSS
+    autocmd BufRead,BufNewFile *.less,*.css setfiletype css
+
+    autocmd BufRead,BufNewFile *.haml set ft=haml
+endif
+
+" Enables folding by indent
+set foldmethod=syntax
+function! FDMi()
+        set foldmethod=indent
+endfunc
+function! FDMs()
+        set foldmethod=syntax
+endfunc
+nnoremap <C-k> :call FDMi()<cr>
+nnoremap <C-l> :call FDMs()<cr>
