@@ -1,3 +1,5 @@
+set encoding=utf-8
+
 set cpo+=J " For double spacing after periods
 
 if &term =~ "xterm"
@@ -21,7 +23,7 @@ endif
 set foldmethod=marker " {{{}}}
 
 " Wrap command:
-command! -nargs=* Wrap set wrap linebreak nolist showbreak=…
+command! -nargs=* Wrap set wrap linebreak nolist showbreak=â¦
 
 command! -nargs=* E e %:p:h/<args>
 
@@ -76,27 +78,6 @@ function! Smart_TabComplete()
   endif
 endfunction
 inoremap <tab> <c-r>=Smart_TabComplete()<CR>
-
-" Toggle relative line numers
-function! NumberToggle()
-  if(&relativenumber == 1)
-    set number
-  else
-    set relativenumber
-  endif
-endfunc
-
-if exists("+relativenumber")
-    nnoremap <C-n> :call NumberToggle()<cr>
-
-    :au FocusLost * :set number
-    :au FocusGained * :set relativenumber
-
-    if has("autocmd")
-        autocmd InsertEnter * :set number
-        autocmd InsertLeave * :set relativenumber
-    endif
-endif
 
 if has("autocmd")
 
