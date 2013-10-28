@@ -90,6 +90,9 @@ let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 
+" - markdown-preview.vim
+set runtimepath^=~/.vim/bundle/markdown-preview.vim
+
 " COMMANDS & MAPPINGS
 
 " - Convenient alternatives to ^ and $
