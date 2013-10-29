@@ -5,21 +5,96 @@
 " Do  Whatever   You  Want
 " With It  (Hell,  You Can
 " Eat  It   If  You  Want)
+" - INSPIRED BY ----------
+" * Steve Losh
 " ========================
 
-" BUNDLES
+" PATHOGEN {{{
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags() " (http://vimcasts.org/e/27)
+" }}}
 
+" BASIC OPTIONS {{{
 set encoding=utf-8
 set cpo+=J " For double spacing after periods
-set foldmethod=marker " {{{}}} " folding
+set noswapfile
+set undofile
+set backup
+set nocompatible
+set modelines=0
+set synmaxcol=800 " don't highlight lines over 800 characters
+set scrolloff=5 " makes the cursor be 5 lines from the top/bottom when possible
 let mapleader = ","
 
-" AUTOCMD "
+set term=xterm-256color
+set list
+set listchars=tab:▸\ ,eol:¬
+set ruler
+
+" - Directories
+set undodir=~/.vim/tmp/undo//     " undo files
+set backupdir=~/.vim/tmp/backup// " backups
+set directory=~/.vim/tmp/swap//   " swap files
+" -- Make those folders automatically if they don't already exist
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif
+
+" - Indentation and wrapping
+set ts=4 sts=4 sw=4 expandtab
+set smartindent
+set autoindent
+set wrap
+set textwidth=80
+set formatoptions=qrn1j
+
+" - Searching
+set ignorecase
+set smartcase
+set gdefault
+set incsearch
+set showmatch
+set hlsearch
+
+set number
+if exists("+relativenumber")
+    set relativenumber
+endif " FYI: Setting both number and relativenumber makes vim show the absolute number for the current line, instead of 0 constantly
+
+" }}}
+
+" GRAPHICAL OPTIONS {{{
+set guicursor+=a:blinkon0 " disable cursor blinking
+"set transparency=1
+set guioptions=aAce
+set guifont=Menlo:h12
+
+syntax on
+set background=dark
+let g:badwolf_tabline = 2
+let g:badwolf_html_link_underline = 0
+colorscheme badwolf
+
+if has("gui_macvim")
+    " Fullscreen
+    set fuoptions=maxhorz,maxvert
+endif
+" }}}
+
+" AUTOCMD {{{
 
 if has("autocmd")
     filetype on
+
+    au VimResized * :wincmd = " resize splits when window is resized
+
+    au VimEnter * NERDTree
 
     autocmd BufNewFile,BufRead *.rss setfiletype xml
     autocmd BufRead,BufNewFile *.less,*.css setfiletype css
@@ -36,22 +111,29 @@ if has("autocmd")
     endif
     autocmd FileType markdown,textile imap <C-S-Z> <Esc>gqip<S-A>
 
-    autocmd FileType python set ft=python.django " For SnipMate
-    autocmd FileType html set ft=htmldjango.html " For SnipMate
+    " - Cursorline {{{
+    " - Only show cursorline in the current window and in normal mode
+
+    augroup cline
+        au!
+        au WinLeave,InsertEnter * set nocursorline
+        au WinEnter,InsertLeave * set cursorline
+    augroup END
+
+    " }}}
+    " - Trailing whitespace {{{
+    " - Only shown when not in insert mode
+
+    augroup trailing
+        au!
+        au InsertEnter * :set listchars-=trail:⌴
+    augroup END
+
+    " }}}
 endif
+" }}}
 
-" FUNCTIONS "
-
-" - Enables folding by indent
-set foldmethod=syntax
-function! FDMi()
-        set foldmethod=indent
-endfunc
-function! FDMs()
-        set foldmethod=syntax
-endfunc
-nnoremap <C-k> :call FDMi()<cr>
-nnoremap <C-l> :call FDMs()<cr>
+" FUNCTIONS {{{
 
 " - Show syntax highlighting groups for word under cursor
 function! <SID>SynStack()
@@ -60,7 +142,7 @@ function! <SID>SynStack()
   endif
   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
-nmap <C-S-O> :call <SID>SynStack()<CR>
+nmap <C-O> :call <SID>SynStack()<CR>
 
 " - Tab completion
 function! Smart_TabComplete()
@@ -81,8 +163,9 @@ function! Smart_TabComplete()
   endif
 endfunction
 inoremap <tab> <c-r>=Smart_TabComplete()<CR>
+" }}}
 
-" PLUGINS "
+" PLUGINS {{{
 
 " - ctrp.vim
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -92,16 +175,54 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 
 " - markdown-preview.vim
 set runtimepath^=~/.vim/bundle/markdown-preview.vim
+map <leader>p :MDP<CR>
 
-" COMMANDS & MAPPINGS
+" - nerdtree.vim
+set runtimepath^=~/.vim/bundle/nerdtree.vim
+let g:NERDTreeWinSize = 40
 
-" - Convenient alternatives to ^ and $
-nmap - ^
-nmap + $
+" - vitality.vim
+set runtimepath^=~/.vim/bundle/vitality.vim
+let g:vitality_always_assume_iterm=1
+" }}}
+
+" MAPPINGS, COMMANDS, ETC. {{{
+
+nnoremap <leader>r :so $MYVIMRC<cr>:nohl<cr>
+nnoremap <leader>l :set list!<cr>
+nnoremap <leader><space> :noh<cr>
+nnoremap <leader>w gq} " wrap paragraph
+map <C-n> :NERDTreeToggle<CR><C-l>
+nnoremap <leader>n <C-w>v<C-w>l " open vertical split
+
+" - Shift keys are people too
+noremap ; :
 
 " - :e on steroids, I hear
 command! -nargs=* E e %:p:h/<args>
 
-" <LEADER> SHORTCUTS "
+" - Split switching {{{
+map <C-J> <C-W>j
+map <C-K> <C-W>k
+map <C-H> <C-W>h
+map <C-l> <C-W>l
+map <leader>- <C-W><
+map <leader>= <C-W>>
+map <leader>0 <C-W>l500<C-W>> " Hides split
+" }}}
 
-nmap <leader>l :set list!<cr>
+" - Folds {{{
+noremap <leader>o zo
+noremap <leader>c zc
+noremap <leader>O zR
+noremap <leader>C zM
+" }}}
+
+" - Append previous line with current line {{{
+noremap <leader>m ^d$k$pjddk$
+" }}}
+" }}}
+
+" THINGS THAT MUST COME LAST FOR SOME FREAKING REASON {{{
+set foldmethod=marker
+" }}}
