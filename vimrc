@@ -142,7 +142,7 @@ function! <SID>SynStack()
   endif
   echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
-nmap <C-O> :call <SID>SynStack()<CR>
+nmap <C-I> :call <SID>SynStack()<CR>
 
 " - Tab completion
 function! Smart_TabComplete()
@@ -194,6 +194,7 @@ nnoremap <leader><space> :noh<cr>
 nnoremap <leader>w gq} " wrap paragraph
 map <C-n> :NERDTreeToggle<CR><C-l>
 nnoremap <leader>n <C-w>v<C-w>l " open vertical split
+noremap <leader>m ^d$k$pjddk$ " append previous line with current line
 
 " - Shift keys are people too
 noremap ; :
@@ -218,9 +219,6 @@ noremap <leader>O zR
 noremap <leader>C zM
 " }}}
 
-" - Append previous line with current line {{{
-noremap <leader>m ^d$k$pjddk$
-" }}}
 " }}}
 
 " THINGS THAT MUST COME LAST FOR SOME FREAKING REASON {{{
