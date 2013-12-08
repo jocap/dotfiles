@@ -12,6 +12,7 @@
 " PATHOGEN {{{
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags() " (http://vimcasts.org/e/27)
+filetype off " until syntax on
 " }}}
 
 " BASIC OPTIONS {{{
@@ -76,10 +77,9 @@ set guioptions=aAce
 set guifont=Menlo:h12
 
 syntax on
+filetype plugin indent on
 set background=dark
-let g:badwolf_tabline = 2
-let g:badwolf_html_link_underline = 0
-colorscheme badwolf
+colorscheme solarized
 
 if has("gui_macvim")
     " Fullscreen
@@ -90,8 +90,6 @@ endif
 " AUTOCMD {{{
 
 if has("autocmd")
-    filetype on
-
     au VimResized * :wincmd = " resize splits when window is resized
 
     au VimEnter * NERDTree
@@ -168,39 +166,40 @@ inoremap <tab> <c-r>=Smart_TabComplete()<CR>
 " PLUGINS {{{
 
 " - ctrp.vim
-set runtimepath^=~/.vim/bundle/ctrlp.vim
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 
 " - markdown-preview.vim
-set runtimepath^=~/.vim/bundle/markdown-preview.vim
 map <leader>p :MDP<CR>
 
 " - nerdtree.vim
-set runtimepath^=~/.vim/bundle/nerdtree.vim
-let g:NERDTreeWinSize = 40
+let g:NERDTreeWinSize = 30
 
 " - vitality.vim
-set runtimepath^=~/.vim/bundle/vitality.vim
 let g:vitality_always_assume_iterm=1
 " }}}
 
 " MAPPINGS, COMMANDS, ETC. {{{
 
+"noremap  <buffer> <silent> k gk
+"noremap  <buffer> <silent> j gj
+noremap + $
+nnoremap ö :
+vnoremap ö :
 nnoremap <leader>r :so $MYVIMRC<cr>:nohl<cr>
 nnoremap <leader>l :set list!<cr>
 nnoremap <leader><space> :noh<cr>
 nnoremap <leader>w gq} " wrap paragraph
 map <C-n> :NERDTreeToggle<CR><C-l>
-nnoremap <leader>n <C-w>v<C-w>l " open vertical split
-noremap <leader>m ^d$k$pjddk$ " append previous line with current line
-
-" - Shift keys are people too
+nnoremap <leader>n <C-w>v<C-w>l
+" ^ open vertical split
+noremap <leader>m ^d$k$pjddk$
+" ^ append previous line with current line
 noremap ; :
-
-" - :e on steroids, I hear
+" ^ shift keys are people too
 command! -nargs=* E e %:p:h/<args>
+" ^ :e on steroids, I hear
 
 " - Split switching {{{
 map <C-J> <C-W>j
@@ -209,7 +208,8 @@ map <C-H> <C-W>h
 map <C-l> <C-W>l
 map <leader>- <C-W><
 map <leader>= <C-W>>
-map <leader>0 <C-W>l500<C-W>> " Hides split
+map <leader>0 <C-W>l500<C-W>>
+" ^ hides split
 " }}}
 
 " - Folds {{{
