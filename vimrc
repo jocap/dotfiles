@@ -95,6 +95,7 @@ if has("autocmd")
     au VimResized * :wincmd = " resize splits when window is resized
 
     au VimEnter * NERDTree
+    au VimEnter * wincmd p
 
     autocmd BufNewFile,BufRead *.rss setfiletype xml
     autocmd BufRead,BufNewFile *.less,*.css setfiletype css
