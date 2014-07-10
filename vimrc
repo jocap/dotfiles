@@ -10,14 +10,13 @@
 " ========================
 
 " PATHOGEN {{{
-call pathogen#runtime_append_all_bundles()
+call pathogen#infect()
 call pathogen#helptags() " (http://vimcasts.org/e/27)
-filetype off " until syntax on
 " }}}
 
 " BASIC OPTIONS {{{
 set encoding=utf-8
-set cpo+=J " For double spacing after periods
+set cpo+=J " for double spacing after periods
 set noswapfile
 set undofile
 set backup
@@ -79,7 +78,10 @@ set guifont=Menlo:h12
 syntax on
 filetype plugin indent on
 set background=dark
-colorscheme solarized
+colorscheme adaryn
+"colorscheme wombat
+set cursorline
+hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE
 
 if has("gui_macvim")
     " Fullscreen
