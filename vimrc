@@ -173,14 +173,9 @@ let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 
-" - markdown-preview.vim
-map <leader>p :MDP<CR>
-
 " - nerdtree.vim
 let g:NERDTreeWinSize = 30
 
-" - vitality.vim
-let g:vitality_always_assume_iterm=1
 " }}}
 
 " MAPPINGS, COMMANDS, ETC. {{{
