@@ -27,7 +27,7 @@ set scrolloff=5 " makes the cursor be 5 lines from the top/bottom when possible
 let mapleader = ","
 
 set term=xterm-256color
-set list
+"set list
 set listchars=tab:▸\ ,eol:¬
 set ruler
 
@@ -78,8 +78,9 @@ set guifont=Menlo:h12
 syntax on
 filetype plugin indent on
 set background=dark
-colorscheme adaryn
+"colorscheme adaryn
 "colorscheme wombat
+colorscheme molokai
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE
 
@@ -173,8 +174,10 @@ let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 
-" - nerdtree.vim
+" - nerdtree
 let g:NERDTreeWinSize = 30
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+" ^ quit vim if NERDtree is last buffer
 
 " }}}
 
@@ -196,8 +199,12 @@ noremap <leader>m ^d$k$pjddk$
 " ^ append previous line with current line
 noremap ; :
 " ^ shift keys are people too
+inoremap <CR> <Esc>
+" ^ pinkies are people too
 command! -nargs=* E e %:p:h/<args>
 " ^ :e on steroids, I hear
+inoremap <leader>q ><Esc>F<lyt>o</<C-r>"><Esc>O<Tab>
+" ^ <htmltag>[TAB] -> <htmltag>...</htmltag>
 
 " - Split switching {{{
 map <C-J> <C-W>j
