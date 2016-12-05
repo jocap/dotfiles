@@ -54,6 +54,10 @@ set wrap
 set textwidth=80
 set formatoptions=qrn1j
 
+" - Splits
+set splitright " split right instead of left
+set splitbelow " vsplit below instead of above
+
 " - Searching
 set ignorecase
 set smartcase
@@ -102,6 +106,7 @@ if has("autocmd")
     autocmd BufRead,BufNewFile *.less,*.css setfiletype css
     autocmd BufRead,BufNewFile *.haml set ft=haml
     autocmd BufRead,BufNewFile *.go set ft=go
+    autocmd BufRead,BufNewFile *.gss set ft=css
 
     " Remember last location in file
     au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
@@ -174,10 +179,21 @@ let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 
+let g:ctrlp_custom_ignore = {
+\ 'dir': '\v[\/]node_modules$',
+\ }
+
 " - nerdtree
 let g:NERDTreeWinSize = 30
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 " ^ quit vim if NERDtree is last buffer
+
+" - nerdcommenter
+let g:NERDSpaceDelims = 1
+:let g:NERDCustomDelimiters = {
+\ 'html': { 'left': '<!-- ', 'right': '-->', 'leftAlt': '/*', 'rightAlt': '*/' }
+\ }
+" ^ html files: html comments + alt. css/javascript comments
 
 " }}}
 
@@ -204,7 +220,18 @@ inoremap <CR> <Esc>
 command! -nargs=* E e %:p:h/<args>
 " ^ :e on steroids, I hear
 inoremap <leader>q ><Esc>F<lyt>o</<C-r>"><Esc>O<Tab>
-" ^ <htmltag>[TAB] -> <htmltag>...</htmltag>
+" ^ <htmltag[leader-q] -> <htmltag>...</htmltag>
+
+" - node.js reload server
+nnoremap <leader>S :!./bin/stop<cr>:!./bin/start<cr>
+
+" - paste/nopaste
+nnoremap <leader>p :set paste<cr>
+inoremap <leader>p <Esc>:set paste<cr>i
+nnoremap <leader>pp :set nopaste<cr>
+inoremap <leader>pp <Esc>:set nopaste<cr>i
+" ^ ,pp doesn't work in paste insert mode, obviously, so it is useless... i'll
+" leave it for now, though, might switch to ctrl instead in the future.
 
 " - Split switching {{{
 map <C-J> <C-W>j
