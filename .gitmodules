@@ -1,9 +1,21 @@
 [submodule "bundle/ctrlp.vim"]
 	path = bundle/ctrlp.vim
 	url = git@github.com:kien/ctrlp.vim.git
-[submodule "bundle/markdown-preview.vim"]
-	path = bundle/markdown-preview.vim
-	url = git@github.com:mkitt/markdown-preview.vim.git
-[submodule "bundle/vitality.vim"]
-	path = bundle/vitality.vim
-	url = git@github.com:sjl/vitality.vim.git
+[submodule "bundle/lightline.vim"]
+	path = bundle/lightline.vim
+	url = https://github.com/itchyny/lightline.vim
+[submodule "bundle/nerdcommenter"]
+	path = bundle/nerdcommenter
+	url = https://github.com/scrooloose/nerdcommenter.git
+[submodule "bundle/nerdtree"]
+	path = bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree.git
+[submodule "bundle/vim-javascript"]
+	path = bundle/vim-javascript
+	url = https://github.com/pangloss/vim-javascript.git
+[submodule "bundle/vim-less"]
+	path = bundle/vim-less
+	url = https://github.com/groenewege/vim-less.git
+[submodule "bundle/vim-textile"]
+	path = bundle/vim-textile
+	url = git@github.com:amiorin/vim-textile.git
