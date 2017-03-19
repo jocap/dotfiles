@@ -1,12 +1,5 @@
 " ========================
 " VIMRC by John Ankarström
-
-" - LICENSE --------------
-" Do  Whatever   You  Want
-" With It  (Hell,  You Can
-" Eat  It   If  You  Want)
-" - INSPIRED BY ----------
-" * Steve Losh
 " ========================
 
 " PATHOGEN {{{
@@ -209,20 +202,18 @@ nnoremap <leader>l :set list!<cr>
 nnoremap <leader><space> :noh<cr>
 nnoremap <leader>w gq} " wrap paragraph
 map <C-n> :NERDTreeToggle<CR><C-l>
-nnoremap <leader>n <C-w>v<C-w>l
-" ^ open vertical split
 noremap <leader>m ^d$k$pjddk$
 " ^ append previous line with current line
 noremap ; :
 " ^ shift keys are people too
 inoremap <CR> <Esc>
-" ^ pinkies are people too
+" ^ fingers are people too
 command! -nargs=* E e %:p:h/<args>
 " ^ :e on steroids, I hear
 inoremap <leader>q ><Esc>F<lyt>o</<C-r>"><Esc>O<Tab>
 " ^ <htmltag[leader-q] -> <htmltag>...</htmltag>
 
-" - node.js reload server
+" - node.js reload server (webfaction)
 nnoremap <leader>S :!./bin/stop<cr>:!./bin/start<cr>
 
 " - paste/nopaste
@@ -245,8 +236,6 @@ map <leader>0 <C-W>l500<C-W>>
 " }}}
 
 " - Folds {{{
-noremap <leader>o zo
-noremap <leader>c zc
 noremap <leader>O zR
 noremap <leader>C zM
 " }}}
