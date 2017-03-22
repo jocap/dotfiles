@@ -64,6 +64,10 @@ if exists("+relativenumber")
     set relativenumber
 endif " FYI: Setting both number and relativenumber makes vim show the absolute number for the current line, instead of 0 constantly
 
+" - Spell check
+set nospell
+set spelllang=en_us
+
 " }}}
 
 " GRAPHICAL OPTIONS {{{
@@ -80,6 +84,9 @@ set background=dark
 colorscheme molokai
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE
+
+hi SpellBad cterm=underline ctermfg=red ctermbg=NONE
+" ^ spell check
 
 if has("gui_macvim")
     " Fullscreen
@@ -223,6 +230,25 @@ nnoremap <leader>pp :set nopaste<cr>
 inoremap <leader>pp <Esc>:set nopaste<cr>i
 " ^ ,pp doesn't work in paste insert mode, obviously, so it is useless... i'll
 " leave it for now, though, might switch to ctrl instead in the future.
+
+" - swedish letters
+inoremap <leader>[ å
+inoremap <leader>' ä
+inoremap <leader>; ö
+
+" - spell check (remember: ]s, [s, z=, zg)
+let g:myLang = 1
+let g:myLangList = ['nospell', 'en_us', 'sv']
+function! MySpellLang()
+  "loop through languages
+  if g:myLang == 0 | setlocal nospell | endif
+  if g:myLang == 1 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
+  if g:myLang == 2 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
+  echomsg 'language:' g:myLangList[g:myLang]
+  let g:myLang = g:myLang + 1
+  if g:myLang >= len(g:myLangList) | let g:myLang = 0 | endif
+endfunction
+map <F2> :<C-U>call MySpellLang()<CR>
 
 " - Split switching {{{
 map <C-J> <C-W>j
