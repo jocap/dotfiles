@@ -15,9 +15,13 @@ set undofile
 set backup
 set nocompatible
 set modelines=0
+set showcmd
+set laststatus=2 " always show status bar
 set synmaxcol=800 " don't highlight lines over 800 characters
 set scrolloff=5 " makes the cursor be 5 lines from the top/bottom when possible
+set mouse=a
 let mapleader = ","
+let maplocalleader = "\\" " \
 
 set term=xterm-256color
 "set list
@@ -195,6 +199,12 @@ let g:NERDSpaceDelims = 1
 \ }
 " ^ html files: html comments + alt. css/javascript comments
 
+" - vimtex
+let g:tex_flavor = 'latex' " not specific to vimtex, but good nonetheless
+let g:vimtex_format_enabled = 1 " make gq work properly
+let g:vimtex_fold_manual = 1 " support folding on demand
+let g:vimtex_view_method = 'mupdf'
+
 " }}}
 
 " MAPPINGS, COMMANDS, ETC. {{{
@@ -235,6 +245,11 @@ inoremap <leader>pp <Esc>:set nopaste<cr>i
 inoremap <leader>[ å
 inoremap <leader>' ä
 inoremap <leader>; ö
+
+" - switch color schemes (light/dark)
+nnoremap <leader>tl :color tabula<CR>:hi CursorLine cterm=NONE<CR>
+nnoremap <leader>td :color molokai<CR> :hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE<CR>
+" ^ make sure this matches standard color scheme
 
 " - spell check (remember: ]s, [s, z=, zg)
 let g:myLang = 1

@@ -19,3 +19,6 @@
 [submodule "bundle/vim-textile"]
 	path = bundle/vim-textile
 	url = git@github.com:amiorin/vim-textile.git
+[submodule "bundle/vimtex"]
+	path = bundle/vimtex
+	url = git@github.com:lervag/vimtex.git
