@@ -219,7 +219,7 @@ nnoremap <leader>l :set list!<cr>
 nnoremap <leader><space> :noh<cr>
 nnoremap <leader>w gq} " wrap paragraph
 map <C-n> :NERDTreeToggle<CR><C-l>
-noremap <leader>m ^d$k$pjddk$
+noremap <leader>m ^d$k$a <Esc>pjddk$
 " ^ append previous line with current line
 noremap ; :
 " ^ shift keys are people too
