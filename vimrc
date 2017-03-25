@@ -131,6 +131,9 @@ if has("autocmd")
     autocmd FileType * setlocal fo-=r fo-=o
     " ^ don't add new comment on new line after comment
 
+    " vimtex
+    autocmd User VimtexEventCompileStopped call KillViewer()
+
     " - Cursorline {{{
     " - Only show cursorline in the current window and in normal mode
 
@@ -159,6 +162,11 @@ endif
 " }}}
 
 " FUNCTIONS {{{
+
+" - Kill PDF viewer (vimtex)
+function! KillViewer()
+    call system('killall mupdf')
+endfunction
 
 " - Set molokai spell check colors
 function! SetSpellColors()
