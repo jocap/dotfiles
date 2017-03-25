@@ -9,7 +9,7 @@ call pathogen#helptags() " (http://vimcasts.org/e/27)
 
 " BASIC OPTIONS {{{
 set encoding=utf-8
-set cpo+=J " for double spacing after periods
+" set cpo+=J " for double spacing after periods
 set noswapfile
 set undofile
 set backup
@@ -23,6 +23,10 @@ set mouse=a
 let mapleader = ","
 let maplocalleader = "\\" " \
 
+" - Nvim
+if has("nvim")
+    set inccommand=nosplit
+endif
 if !has("nvim")
     set term=xterm-256color
 endif
@@ -52,7 +56,7 @@ set smartindent
 set autoindent
 set wrap
 set textwidth=80
-set fo-=r fo-=o " don't add new comment on new line after comment
+" Note: there are more format options under autocmd
 set formatoptions=cqn2j " auto-wrap comments,
                         " allow gq,
                         " recognize numbers lists,
@@ -83,10 +87,10 @@ set spelllang=en_us
 " }}}
 
 " GRAPHICAL OPTIONS {{{
-set guicursor+=a:blinkon0 " disable cursor blinking
-"set transparency=1
-set guioptions=aAce
-set guifont=Menlo:h12
+" set guicursor+=a:blinkon0 " disable cursor blinking
+" "set transparency=1
+" set guioptions=aAce
+" set guifont=Menlo:h12
 
 syntax on
 filetype plugin indent on
@@ -94,12 +98,13 @@ set background=dark
 "colorscheme adaryn
 "colorscheme wombat
 colorscheme molokai
+
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE
 
 if has("gui_macvim")
     " Fullscreen
-    set fuoptions=maxhorz,maxvert
+    set fuoptions=maxhorz,maxvert " what's this?
 endif
 " }}}
 
@@ -108,9 +113,10 @@ endif
 if has("autocmd")
     au VimResized * :wincmd = " resize splits when window is resized
 
-    au VimEnter * NERDTree
-    au VimEnter * wincmd p
+    au VimEnter * NERDTree  " start NERDTree
+    au VimEnter * wincmd p  " switch back from NERDTree split
 
+    " File types
     autocmd BufNewFile,BufRead *.rss setfiletype xml
     autocmd BufRead,BufNewFile *.less,*.css setfiletype css
     autocmd BufRead,BufNewFile *.haml set ft=haml
@@ -121,11 +127,9 @@ if has("autocmd")
     au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
         \| exe "normal g'\"" | endif
 
-    if executable("par")
-        autocmd FileType markdown,textile,mail Par()
-        command! -nargs=* Par set formatprg=par\ -w50\ -j\ -q
-    endif
-    autocmd FileType markdown,textile imap <C-S-Z> <Esc>gqip<S-A>
+    " Format options
+    autocmd FileType * setlocal fo-=r fo-=o
+    " ^ don't add new comment on new line after comment
 
     " - Cursorline {{{
     " - Only show cursorline in the current window and in normal mode
@@ -137,7 +141,7 @@ if has("autocmd")
     augroup END
 
     " }}}
-    " - Trailing whitespace {{{
+    " - Trailing whitespace - not working? {{{
     " - Only shown when not in insert mode
 
     augroup trailing
@@ -148,7 +152,7 @@ if has("autocmd")
     " }}}
     " - Neovim {{{
     if has("nvim")
-        "autocmd VimLeave * !rm $HOME/.nvimrunning
+        " Nothing here, yet
     endif
     " }}}
 endif
@@ -234,6 +238,9 @@ let g:tex_flavor = 'latex' " not specific to vimtex, but good nonetheless
 let g:vimtex_format_enabled = 1 " make gq work properly
 let g:vimtex_fold_manual = 1 " support folding on demand
 let g:vimtex_view_method = 'mupdf'
+if has("nvim")
+    let g:vimtex_latexmk_progname = '~/.local/bin/nvr'
+endif
 
 " }}}
 
