@@ -97,7 +97,8 @@ filetype plugin indent on
 set background=dark
 "colorscheme adaryn
 "colorscheme wombat
-colorscheme molokai
+"colorscheme molokai
+colorscheme jellybeans+
 
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE
