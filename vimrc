@@ -23,7 +23,10 @@ set mouse=a
 let mapleader = ","
 let maplocalleader = "\\" " \
 
-set term=xterm-256color
+if !has("nvim")
+    set term=xterm-256color
+endif
+
 "set list
 set listchars=tab:▸\ ,eol:¬
 set ruler
@@ -49,7 +52,12 @@ set smartindent
 set autoindent
 set wrap
 set textwidth=80
-set formatoptions=qrn1j
+set fo-=r fo-=o " don't add new comment on new line after comment
+set formatoptions=cqn2j " auto-wrap comments,
+                        " allow gq,
+                        " recognize numbers lists,
+                        " use 2nd line indent for whole paragraph,
+                        " join comments in a better way
 
 " - Splits
 set splitright " split right instead of left
@@ -88,9 +96,6 @@ set background=dark
 colorscheme molokai
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE
-
-hi SpellBad cterm=underline ctermfg=red ctermbg=NONE
-" ^ spell check
 
 if has("gui_macvim")
     " Fullscreen
@@ -141,10 +146,35 @@ if has("autocmd")
     augroup END
 
     " }}}
+    " - Neovim {{{
+    if has("nvim")
+        "autocmd VimLeave * !rm $HOME/.nvimrunning
+    endif
+    " }}}
 endif
 " }}}
 
 " FUNCTIONS {{{
+
+" - Set molokai spell check colors
+function! SetSpellColors()
+    hi SpellBad cterm=underline ctermfg=red ctermbg=NONE
+    hi SpellLocal cterm=underline ctermfg=blue ctermbg=NONE
+endfunction
+call SetSpellColors()
+
+" - Spell check (remember: ]s, [s, z=, zg)
+let g:myLang = 1
+let g:myLangList = ['nospell', 'en_gb', 'sv']
+function! MySpellLang()
+  "loop through languages
+  if g:myLang == 0 | setlocal nospell | endif
+  if g:myLang == 1 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
+  if g:myLang == 2 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
+  echomsg 'language:' g:myLangList[g:myLang]
+  let g:myLang = g:myLang + 1
+  if g:myLang >= len(g:myLangList) | let g:myLang = 0 | endif
+endfunction
 
 " - Show syntax highlighting groups for word under cursor
 function! <SID>SynStack()
@@ -248,21 +278,10 @@ inoremap <leader>; ö
 
 " - switch color schemes (light/dark)
 nnoremap <leader>tl :color tabula<CR>:hi CursorLine cterm=NONE<CR>
-nnoremap <leader>td :color molokai<CR> :hi CursorLine cterm=NONE ctermbg=234 ctermfg=NONE<CR>
+nnoremap <leader>td :color molokai<CR> :call SetSpellColors()<CR>
 " ^ make sure this matches standard color scheme
 
-" - spell check (remember: ]s, [s, z=, zg)
-let g:myLang = 1
-let g:myLangList = ['nospell', 'en_us', 'sv']
-function! MySpellLang()
-  "loop through languages
-  if g:myLang == 0 | setlocal nospell | endif
-  if g:myLang == 1 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
-  if g:myLang == 2 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
-  echomsg 'language:' g:myLangList[g:myLang]
-  let g:myLang = g:myLang + 1
-  if g:myLang >= len(g:myLangList) | let g:myLang = 0 | endif
-endfunction
+" - spell check
 map <F2> :<C-U>call MySpellLang()<CR>
 
 " - Split switching {{{
