@@ -109,10 +109,6 @@ endif
 if has("autocmd")
     au VimResized * :wincmd = " resize splits when window is resized
 
-    au VimEnter * NERDTree      " start NERDTree
-    au VimEnter * wincmd p      " switch back from NERDTree split
-    au VimEnter * NERDTreeClose " close NERDTree
-
     " File types
     autocmd BufNewFile,BufRead *.rss setfiletype xml
     autocmd BufRead,BufNewFile *.less,*.css setfiletype css
@@ -165,7 +161,7 @@ function! KillViewer()
     call system('killall mupdf')
 endfunction
 
-" - Set molokai spell check colors
+" - Set spell check colors (for colorschemes that don't have sensible defaults)
 function! SetSpellColors()
     hi SpellBad cterm=underline ctermfg=red ctermbg=NONE
     hi SpellLocal cterm=underline ctermfg=blue ctermbg=NONE
@@ -200,16 +196,23 @@ nmap <C-I> :call <SID>SynStack()<CR>
 
 " Loading {{{
 call plug#begin('~/.vim/plugins')
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'pangloss/vim-javascript', { 'for': 'js' }
 Plug 'scrooloose/nerdtree'
-Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter', { 'on': 'NERDTreeToggle' }
 Plug 'itchyny/lightline.vim'
 Plug 'lervag/vimtex'
 Plug 'Shougo/deoplete.nvim'
 call plug#end()
+
 " }}}
 
 " Configuration {{{
+
+" - fzf
+nnoremap <c-p> :Files<CR>
+imap <c-x><c-l> <plug>(fzf-complete-line)
 
 let g:ctrlp_custom_ignore = {
 \ 'dir': '\v[\/]node_modules$',
@@ -283,8 +286,8 @@ inoremap <leader>' ä
 inoremap <leader>; ö
 
 " - switch color schemes (light/dark)
-nnoremap <leader>tl :color tabula<CR>:hi CursorLine cterm=NONE<CR>
-nnoremap <leader>td :color molokai<CR> :call SetSpellColors()<CR>
+nnoremap <leader>tl :color calmar256-light<CR>
+nnoremap <leader>td :color jellybeans<CR> :call SetSpellColors()<CR>
 " ^ make sure this matches standard color scheme
 
 " - spell check
