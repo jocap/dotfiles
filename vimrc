@@ -2,11 +2,6 @@
 " VIMRC by John Ankarström
 " ========================
 
-" PATHOGEN {{{
-call pathogen#infect()
-Helptags " generate pathogen helptags
-" }}}
-
 " BASIC OPTIONS {{{
 set encoding=utf-8
 " set cpo+=J " for double spacing after periods
@@ -203,10 +198,18 @@ nmap <C-I> :call <SID>SynStack()<CR>
 
 " PLUGINS {{{
 
-" - ctrp.vim
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+" Loading {{{
+call plug#begin('~/.vim/plugins')
+Plug 'pangloss/vim-javascript', { 'for': 'js' }
+Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdcommenter'
+Plug 'itchyny/lightline.vim'
+Plug 'lervag/vimtex'
+Plug 'Shougo/deoplete.nvim'
+call plug#end()
+" }}}
+
+" Configuration {{{
 
 let g:ctrlp_custom_ignore = {
 \ 'dir': '\v[\/]node_modules$',
@@ -214,8 +217,6 @@ let g:ctrlp_custom_ignore = {
 
 " - nerdtree
 let g:NERDTreeWinSize = 30
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-" ^ quit vim if NERDtree is last buffer
 
 " - nerdcommenter
 let g:NERDSpaceDelims = 1
@@ -237,6 +238,8 @@ endif
 if has('nvim')
     let g:deoplete#enable_at_startup = 1
 endif
+
+" }}}
 
 " }}}
 
