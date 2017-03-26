@@ -22,3 +22,6 @@
 [submodule "bundle/vimtex"]
 	path = bundle/vimtex
 	url = git@github.com:lervag/vimtex.git
+[submodule "bundle/deoplete.nvim"]
+	path = bundle/deoplete.nvim
+	url = git@github.com:Shougo/deoplete.nvim.git

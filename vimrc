@@ -4,7 +4,7 @@
 
 " PATHOGEN {{{
 call pathogen#infect()
-call pathogen#helptags() " (http://vimcasts.org/e/27)
+Helptags " generate pathogen helptags
 " }}}
 
 " BASIC OPTIONS {{{
@@ -114,8 +114,9 @@ endif
 if has("autocmd")
     au VimResized * :wincmd = " resize splits when window is resized
 
-    au VimEnter * NERDTree  " start NERDTree
-    au VimEnter * wincmd p  " switch back from NERDTree split
+    au VimEnter * NERDTree      " start NERDTree
+    au VimEnter * wincmd p      " switch back from NERDTree split
+    au VimEnter * NERDTreeClose " close NERDTree
 
     " File types
     autocmd BufNewFile,BufRead *.rss setfiletype xml
@@ -198,25 +199,6 @@ function! <SID>SynStack()
 endfunc
 nmap <C-I> :call <SID>SynStack()<CR>
 
-" - Tab completion
-function! Smart_TabComplete()
-  let line = getline('.')                         " curline
-  let substr = strpart(line, -1, col('.')+1)      " from start to cursor
-  let substr = matchstr(substr, "[^ \t]*$")       " word till cursor
-  if (strlen(substr)==0)                          " nothing to match on empty string
-    return "\<tab>"
-  endif
-  let has_period = match(substr, '\.') != -1      " position of period, if any
-  let has_slash = match(substr, '\/') != -1       " position of slash, if any
-  if (!has_period && !has_slash)
-    return "\<C-X>\<C-P>"                         " existing text matching
-  elseif ( has_slash )
-    return "\<C-X>\<C-F>"                         " file matching
-  else
-    return "\<C-X>\<C-O>"                         " plugin matching
-  endif
-endfunction
-inoremap <tab> <c-r>=Smart_TabComplete()<CR>
 " }}}
 
 " PLUGINS {{{
@@ -249,6 +231,11 @@ let g:vimtex_fold_manual = 1 " support folding on demand
 let g:vimtex_view_method = 'mupdf'
 if has("nvim")
     let g:vimtex_latexmk_progname = '~/.local/bin/nvr'
+endif
+
+" - deoplete
+if has('nvim')
+    let g:deoplete#enable_at_startup = 1
 endif
 
 " }}}
@@ -299,6 +286,10 @@ nnoremap <leader>td :color molokai<CR> :call SetSpellColors()<CR>
 
 " - spell check
 map <F2> :<C-U>call MySpellLang()<CR>
+
+" - tabs
+nnoremap <leader>. :tabprevious<CR>
+nnoremap <leader>/ :tabnext<CR>
 
 " - Split switching {{{
 map <C-J> <C-W>j
