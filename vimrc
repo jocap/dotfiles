@@ -243,7 +243,7 @@ function! SetSpellColors()
 endfunction
 " --------------------------------------------------------------------------}}}
 
-" Between 06-18, use light color - other times, use dark color -----------{{{
+" At day, use light color - other times, use dark color --------------------{{{
 " (to change manually, see mappings <leader>td and <leader>tl)
 function! SetColor(which)
     let l:color_options = []
@@ -267,16 +267,24 @@ function! SetColor(which)
 endfunction
 function! AutoSetColor()
     let l:hour = system('date +%H')
-    if (l:hour > 6 && l:hour < 18)
-        call SetColor('light')
-    else
-        call SetColor('dark')
-    endif
+    if system('which sun') =~ 'not found' " sun script not found
+        if (l:hour >= 6 && l:hour <= 18) " default hours (spring)
+            call SetColor('light')
+        else
+            call SetColor('dark')
+        endif
+    else " sun script found
+        if (l:hour >= system('sun rise') && l:hour <= system('sun set'))
+            call SetColor('light')
+        else
+            call SetColor('dark')
+        endif
+    end
 endfunction
 call AutoSetColor()
 " --------------------------------------------------------------------------}}}
 
-" Create pretty fold on current line -------------------------------------{{{
+" Create pretty fold on current line (doesn't work everywhere yet) -------{{{
 function! CreateFold(...)
     let l:close =  a:0 >= 1 ? a:1 : 0 " a:0 = no of arguments, a:1 = 1st argument
     let l:indent = a:0 >= 2 ? a:2 : -1
@@ -329,7 +337,7 @@ function! CreateFold(...)
 endfunction
 " --------------------------------------------------------------------------}}}
 
-" Wrap selection in pretty fold --------------------------------------------{{{
+" Wrap selection in pretty fold (using CreateFold())------------------------{{{
 function! WrapInFold()
     let l:line1 = line("'<")
     let l:line2 = line("'>")
