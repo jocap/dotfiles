@@ -29,7 +29,7 @@ call plug#end()
 
 " NERDtree {{{
 let g:NERDTreeWinSize = 30
-map <C-n> :<C-U>NERDTreeToggle<CR><C-l>
+nnoremap <silent> <C-n> :<C-U>NERDTreeToggle<CR><C-l>
 " }}}
 
 " NERDcommenter {{{
@@ -57,13 +57,32 @@ endif
 " }}}
 
 " fzf {{{
-nnoremap <c-p> :<C-U>Files<CR>
-imap <c-x><c-l> <plug>(fzf-complete-line)
+nnoremap <silent> <space><space> :<C-U>Files<CR>
+nnoremap <silent> <space>b :<C-U>Buffers<CR>
+nnoremap <silent> <space>l :<C-U>BLines<CR>
+nnoremap <silent> <space>h :<C-U>History<CR>
+nnoremap <silent> <space>c :<C-U>call fzf#vim#command_history({'right': '40'})<CR>
+nnoremap <silent> <space>, :<C-U>call fzf#vim#search_history({'right': '40'})<CR>
+
+inoremap <c-x><c-l> <plug>(fzf-complete-line)
+
+let g:fzf_action = {
+    \ 'ctrl-t': 'tab split',
+    \ 'ctrl-s': 'split',
+    \ 'ctrl-v': 'vsplit' }
+
+if has('nvim')
+    let g:fzf_layout = { 'window': 'enew' }
+    " ^ open fzf buffer in whole window
+
+    let g:fzf_nvim_statusline = 0
+    " ^ hide ugly statusline
+endif
 " }}}
 
 " UltiSnips {{{
 let g:UltiSnipsSnippetDirectories = ['~/.vim/UltiSnips', 'UltiSnips']
-nnoremap <leader>s :<C-U>call UltiSnips#ListSnippets()<CR>
+nnoremap <silent> <leader>s :<C-U>call UltiSnips#ListSnippets()<CR>
 " }}}
 
 " submode {{{
@@ -356,11 +375,12 @@ endfunction
 
 noremap ; :
 
-nnoremap <leader>r :<C-U>so $MYVIMRC<cr>:<C-U>nohl<cr> 
-" ^ reload vimrc
-nnoremap <leader>l :<C-U>set list!<cr>
+nnoremap <silent> <leader>r :so $MYVIMRC<CR>:noh<CR>
+" ^ reload vimrc (for some reason, adding <C-U> has the side effect of moving
+" the cursor one character forward after using this command...?)
+nnoremap <silent> <leader>l :<C-U>set list!<CR>
 " ^ display list invisible characters
-nnoremap <leader><space> :<C-U>noh<cr>
+nnoremap <silent> <leader><space> :<C-U>noh<CR>
 " ^ unhighlight matches
 nnoremap <leader>w gq}
 " ^ wrap paragraph
@@ -370,21 +390,24 @@ inoremap <CR> <Esc>
 " ^ use <CR> as <Esc> (use <C>-<CR> to create new line in insert mode)
 
 " Switch color schemes (light/dark):
-nnoremap <leader>tl :<C-U>call SetColor('light')<CR>
-nnoremap <leader>td :<C-U>call SetColor('dark')<CR>
+nnoremap <silent> <leader>tl :<C-U>call SetColor('light')<CR>
+nnoremap <silent> <leader>td :<C-U>call SetColor('dark')<CR>
 
 " Spell check:
-noremap <F2> :<C-U>call SpellCheck()<CR>
+noremap <silent> <F2> :<C-U>call SpellCheck()<CR>
 
 " Tabs:
-nnoremap <leader>. :<C-U>tabprevious<CR>
-nnoremap <leader>/ :<C-U>tabnext<CR>
+nnoremap <silent> <leader>. :<C-U>tabprevious<CR>
+nnoremap <silent> <leader>/ :<C-U>tabnext<CR>
 
 " Folds --------------------------------------------------------------------{{{
 noremap <leader>O zR
 noremap <leader>C zM
-noremap <leader>f :<C-U>call CreateFold()<CR>
-vnoremap <leader>f :<C-U>call WrapInFold()<CR>
+
+if has('autocmd') " for now, only use for VimL (buggy elsewhere)
+    au FileType vim noremap <leader>f :<C-U>call CreateFold()<CR>
+    au FileType vim vnoremap <leader>f :<C-U>call WrapInFold()<CR>
+endif
 " --------------------------------------------------------------------------}}}
 
 " Splits -------------------------------------------------------------------{{{
@@ -405,6 +428,17 @@ nnoremap = <C-W>>
 inoremap <localleader>[ å
 inoremap <localleader>' ä
 inoremap <localleader>; ö
+
+inoremap <localleader>{ Å
+inoremap <localleader>" Ä
+inoremap <localleader>: Ö
+
+" In case one accidentally presses shift with localleader (\):
+inoremap \|{ Å
+inoremap \|" Ä
+inoremap \|: Ö
+" NOTE: | has to be escaped in the mapping -> \|
+" NOTE: remember to change this binding if localleader is changed
 " }}}
 
 " paste/nopaste {{{
