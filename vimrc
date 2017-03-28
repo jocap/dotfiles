@@ -16,6 +16,11 @@ Plug 'lervag/vimtex'
 Plug 'kana/vim-submode' | Plug '/home/john/.vim/dev/plugins/jumpinline.vim'
 Plug 'KabbAmine/vCoolor.vim'
 Plug 'ap/vim-css-color'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-speeddating'
+Plug 'majutsushi/tagbar'
+Plug 'chrisbra/NrrwRgn' " <leader>nr
+Plug 'jocap/vim-interestingwords' " <leader>k, <leader>K
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim'
@@ -93,6 +98,10 @@ let g:submode_keep_leaving_key = 1 " leave submode by pressing any other key
 let g:vcoolor_lowercase = 1 " lowercase hex colors
 " }}}
 
+" tagbar {{{
+nnoremap <silent> <space>t :<C-U>TagbarToggle<CR>
+" }}}
+
 " --------------------------------------------------------------------------}}}
 
 " }}}
@@ -110,6 +119,7 @@ set scrolloff=5       " always keep margin of 5 lines minimum above/below cursor
 set mouse=a           " mouse mode
 set foldmethod=marker " {{{ fold }}}
 set ruler             " show line number, position in line, etc.
+set hidden            " allow buffers to be hidden
 let mapleader = ","
 let maplocalleader = "\\" " \
 
@@ -369,11 +379,24 @@ function! WrapInFold()
 endfunction
 " --------------------------------------------------------------------------}}}
 
+" Insert new line with exact same indent as current one --------------------{{{
+function! NewLineSameIndent(mode)
+    let l:indent = substitute(getline('.'), '^\(\s*\)\(.\{-}\)\s*$', '\1', '')
+    normal! o
+    execute 'normal! i' . l:indent
+    if a:mode == 'i'
+        startinsert! " ! -> like A
+    endif
+endfunction
+" --------------------------------------------------------------------------}}}
+
 " --------------------------------------------------------------------------}}}
 
 " MAPPINGS -----------------------------------------------------------------{{{
 
 noremap ; :
+noremap ' ;
+" ^ set ' to default ; (repeat) - use ` to go to mark.
 
 nnoremap <silent> <leader>r :so $MYVIMRC<CR>:noh<CR>
 " ^ reload vimrc (for some reason, adding <C-U> has the side effect of moving
@@ -388,6 +411,9 @@ noremap <leader>m ^d$k$a <Esc>pjddk$
 " ^ append previous line with current line
 inoremap <CR> <Esc>
 " ^ use <CR> as <Esc> (use <C>-<CR> to create new line in insert mode)
+nnoremap <silent> `<CR> :<C-U>call NewLineSameIndent('n')<CR>
+inoremap <silent> `<CR> <Esc>:<C-U>call NewLineSameIndent('i')<CR>
+" ^ see NewLineSameIndent() function
 
 " Switch color schemes (light/dark):
 nnoremap <silent> <leader>tl :<C-U>call SetColor('light')<CR>
@@ -425,20 +451,18 @@ nnoremap = <C-W>>
 " --------------------------------------------------------------------------}}}
 
 " Swedish letters {{{
-inoremap <localleader>[ å
-inoremap <localleader>' ä
-inoremap <localleader>; ö
+inoremap <[ å
+inoremap <' ä
+inoremap <; ö
 
-inoremap <localleader>{ Å
-inoremap <localleader>" Ä
-inoremap <localleader>: Ö
+inoremap <{ Å
+inoremap <" Ä
+inoremap <: Ö
 
-" In case one accidentally presses shift with localleader (\):
-inoremap \|{ Å
-inoremap \|" Ä
-inoremap \|: Ö
-" NOTE: | has to be escaped in the mapping -> \|
-" NOTE: remember to change this binding if localleader is changed
+" In case one accidentally presses shift with <
+inoremap >{ Å
+inoremap >" Ä
+inoremap >: Ö
 " }}}
 
 " paste/nopaste {{{
