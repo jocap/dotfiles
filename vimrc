@@ -19,11 +19,12 @@ Plug 'ap/vim-css-color'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'majutsushi/tagbar'
-Plug 'chrisbra/NrrwRgn' " <leader>nr, :NRP -> :NRM
+Plug 'chrisbra/NrrwRgn'
 Plug 'jocap/vim-interestingwords' " <leader>k, <leader>K
 Plug 'wesQ3/vim-windowswap'
 Plug 'pangloss/vim-javascript'
 Plug 'junegunn/vader.vim'
+Plug 'tpope/vim-obsession'
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim'
@@ -101,12 +102,19 @@ let g:submode_keep_leaving_key = 1 " leave submode by pressing any other key
 " - default configuration
 " }}}
 
-" vCoolor {{{
+" vCoolor (Alt-R/V/W) {{{
 let g:vcoolor_lowercase = 1 " lowercase hex colors
 " }}}
 
 " tagbar {{{
 nnoremap <silent> <space>t :<C-U>TagbarToggle<CR>
+" }}}
+
+" NrrwRgn (<leader>nr, :NRP -> :NRM) {{{
+let g:nrrw_rgn_vert = 1 " use vertical split
+let g:nrrw_rgn_wdth = 80
+let g:nrrw_rgn_hl = 'WildMenu' " default: WildMenu
+let g:nrrw_topbot_leftright = 'botright' " window appears on bottom/right
 " }}}
 
 " WindowSwap {{{
@@ -216,7 +224,8 @@ let g:dark_color = 'jellybeans'
 let g:dark_color_options = [
 \ 'hi CursorLine cterm=NONE ctermfg=NONE ctermbg=237',
 \ 'hi ColorColumn ctermbg=234',
-\ 'hi MatchParen cterm=bold ctermbg=none ctermfg=226'
+\ 'hi MatchParen cterm=bold ctermbg=none ctermfg=226',
+\ 'hi WildMenu ctermbg=17 ctermfg=3'
 \ ]
 
 let g:light_color = 'calmar256-light'
