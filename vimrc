@@ -2,7 +2,7 @@
 "                           VIMRC: by John Ankarström
 " =============================================================================
 
-" PLUGINS ------------------------------------------------------------------{{{
+" PLUGINS =================================================================={{{
 
 " Loading ------------------------------------------------------------------{{{
 call plug#begin('~/.vim/plugins')
@@ -19,8 +19,11 @@ Plug 'ap/vim-css-color'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'majutsushi/tagbar'
-Plug 'chrisbra/NrrwRgn' " <leader>nr
+Plug 'chrisbra/NrrwRgn' " <leader>nr, :NRP -> :NRM
 Plug 'jocap/vim-interestingwords' " <leader>k, <leader>K
+Plug 'wesQ3/vim-windowswap'
+Plug 'pangloss/vim-javascript'
+Plug 'junegunn/vader.vim'
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim'
@@ -34,7 +37,7 @@ call plug#end()
 
 " NERDtree {{{
 let g:NERDTreeWinSize = 30
-nnoremap <silent> <C-n> :<C-U>NERDTreeToggle<CR><C-l>
+nnoremap <silent> <C-f> :<C-U>NERDTreeToggle<CR><C-l>
 " }}}
 
 " NERDcommenter {{{
@@ -94,6 +97,10 @@ nnoremap <silent> <leader>s :<C-U>call UltiSnips#ListSnippets()<CR>
 let g:submode_keep_leaving_key = 1 " leave submode by pressing any other key
 " }}}
 
+" jumpinline.vim {{{
+" - default configuration
+" }}}
+
 " vCoolor {{{
 let g:vcoolor_lowercase = 1 " lowercase hex colors
 " }}}
@@ -102,11 +109,16 @@ let g:vcoolor_lowercase = 1 " lowercase hex colors
 nnoremap <silent> <space>t :<C-U>TagbarToggle<CR>
 " }}}
 
-" --------------------------------------------------------------------------}}}
-
+" WindowSwap {{{
+let g:windowswap_map_keys = 0 " prevent default bindings
+nnoremap <silent> <space>ww :call WindowSwap#EasyWindowSwap()<CR>
 " }}}
 
-" BASIC OPTIONS ------------------------------------------------------------{{{
+" --------------------------------------------------------------------------}}}
+
+" ==========================================================================}}}
+
+" BASIC OPTIONS ============================================================{{{
 set encoding=utf-8
 set undofile          " enable persistent undo
 set backup            " enable backups
@@ -115,9 +127,9 @@ set nomodeline        " disable parsing of :set command at BOF and EOF
 set showcmd           " display command letters pressed in lower-right corner
 set laststatus=2      " always show status bar
 set synmaxcol=800     " don't highlight lines over 800 characters
-set scrolloff=5       " always keep margin of 5 lines minimum above/below cursor
+set scrolloff=5       " keep margin of 5 lines minimum above/below cursor
 set mouse=a           " mouse mode
-set foldmethod=marker " {{{ fold }}}
+set foldmethod=marker " use markers to fold (three curly braces)
 set ruler             " show line number, position in line, etc.
 set hidden            " allow buffers to be hidden
 let mapleader = ","
@@ -175,7 +187,7 @@ if !isdirectory(expand(&directory))
 endif
 " }}}
 
-" Indentation and wrapping {{{
+" Indentation and formatting {{{
 set ts=4 sts=4 sw=4 expandtab
 set smartindent
 set autoindent
@@ -189,21 +201,33 @@ set formatoptions=cqn2j " auto-wrap comments,
 " Note: there are more format options under autocmd
 " }}}
 
-" }}}
+" ==========================================================================}}}
 
-" GRAPHICAL OPTIONS --------------------------------------------------------{{{
+" GRAPHICAL OPTIONS ========================================================{{{
 syntax on
 filetype plugin indent on
 set background=dark
 set cursorline
 
+set colorcolumn=80
+let &colorcolumn=join(range(80,999),",")
+
 let g:dark_color = 'jellybeans'
-let g:dark_color_options = ['hi CursorLine cterm=NONE ctermfg=NONE ctermbg=237']
+let g:dark_color_options = [
+\ 'hi CursorLine cterm=NONE ctermfg=NONE ctermbg=237',
+\ 'hi ColorColumn ctermbg=234',
+\ 'hi MatchParen cterm=bold ctermbg=none ctermfg=226'
+\ ]
+
 let g:light_color = 'calmar256-light'
+let g:light_color_options = [
+\ 'hi ColorColumn ctermbg=229',
+\ 'hi MatchParen cterm=bold ctermbg=223 ctermfg=88'
+\ ]
 
-" }}}
+" ==========================================================================}}}
 
-" AUTOCMD ------------------------------------------------------------------{{{
+" AUTOCMD =================================================================={{{
 if has("autocmd")
     au VimResized * :wincmd = " resize splits when window is resized
 
@@ -240,9 +264,9 @@ if has("autocmd")
         " Nothing here, yet
     endif " }}}
 endif
-" --------------------------------------------------------------------------}}}
+" ==========================================================================}}}
 
-" FUNCTIONS ----------------------------------------------------------------{{{
+" FUNCTIONS ================================================================{{{
 
 " Cycle through spell check languages --------------------------------------{{{
 " (remember: ]s, [s, z=, zg)
@@ -257,7 +281,7 @@ function! SpellCheck()
   let g:myLang = g:myLang + 1
   if g:myLang >= len(g:myLangList) | let g:myLang = 0 | endif
 endfunction
-" --------------------------------------------------------------------------}}}
+" ==========================================================================}}}
 
 " Kill PDF viewer (for vimtex) -------------------------------------------{{{
 function! KillViewer()
@@ -303,7 +327,8 @@ function! AutoSetColor()
             call SetColor('dark')
         endif
     else " sun script found
-        if (l:hour >= system('sun rise') && l:hour <= system('sun set'))
+        if (l:hour >= str2nr(system('sun rise'))
+        \ && l:hour <= str2nr(system('sun set')))
             call SetColor('light')
         else
             call SetColor('dark')
@@ -366,7 +391,7 @@ function! CreateFold(...)
 endfunction
 " --------------------------------------------------------------------------}}}
 
-" Wrap selection in pretty fold (using CreateFold())------------------------{{{
+" Wrap selection in pretty fold (using CreateFold()) -----------------------{{{
 function! WrapInFold()
     let l:line1 = line("'<")
     let l:line2 = line("'>")
@@ -379,20 +404,9 @@ function! WrapInFold()
 endfunction
 " --------------------------------------------------------------------------}}}
 
-" Insert new line with exact same indent as current one --------------------{{{
-function! NewLineSameIndent(mode)
-    let l:indent = substitute(getline('.'), '^\(\s*\)\(.\{-}\)\s*$', '\1', '')
-    normal! o
-    execute 'normal! i' . l:indent
-    if a:mode == 'i'
-        startinsert! " ! -> like A
-    endif
-endfunction
-" --------------------------------------------------------------------------}}}
+" ==========================================================================}}}
 
-" --------------------------------------------------------------------------}}}
-
-" MAPPINGS -----------------------------------------------------------------{{{
+" MAPPINGS ================================================================={{{
 
 noremap ; :
 noremap ' ;
@@ -407,13 +421,8 @@ nnoremap <silent> <leader><space> :<C-U>noh<CR>
 " ^ unhighlight matches
 nnoremap <leader>w gq}
 " ^ wrap paragraph
-noremap <leader>m ^d$k$a <Esc>pjddk$
-" ^ append previous line with current line
 inoremap <CR> <Esc>
 " ^ use <CR> as <Esc> (use <C>-<CR> to create new line in insert mode)
-nnoremap <silent> `<CR> :<C-U>call NewLineSameIndent('n')<CR>
-inoremap <silent> `<CR> <Esc>:<C-U>call NewLineSameIndent('i')<CR>
-" ^ see NewLineSameIndent() function
 
 " Switch color schemes (light/dark):
 nnoremap <silent> <leader>tl :<C-U>call SetColor('light')<CR>
@@ -426,17 +435,17 @@ noremap <silent> <F2> :<C-U>call SpellCheck()<CR>
 nnoremap <silent> <leader>. :<C-U>tabprevious<CR>
 nnoremap <silent> <leader>/ :<C-U>tabnext<CR>
 
-" Folds --------------------------------------------------------------------{{{
-noremap <leader>O zR
-noremap <leader>C zM
+" Folds ===================================================================={{{
+nnoremap <leader>O zR
+nnoremap <leader>C zM
 
 if has('autocmd') " for now, only use for VimL (buggy elsewhere)
     au FileType vim noremap <leader>f :<C-U>call CreateFold()<CR>
     au FileType vim vnoremap <leader>f :<C-U>call WrapInFold()<CR>
 endif
-" --------------------------------------------------------------------------}}}
+" ==========================================================================}}}
 
-" Splits -------------------------------------------------------------------{{{
+" Splits ==================================================================={{{
 map <C-J> <C-W>j
 map <C-K> <C-W>k
 map <C-H> <C-W>h
@@ -447,8 +456,10 @@ map <leader>0 <C-W>l500<C-W>>
 " vsplit:
 nnoremap - <C-W><
 nnoremap = <C-W>>
-" (for (h)split, see hsplit-resize submode)
-" --------------------------------------------------------------------------}}}
+noremap \| =
+" ^ Make | auto-indent instead of =, seeing as how we've replaced =
+" (for (h)split, see hsplit=resize submode)
+" ==========================================================================}}}
 
 " Swedish letters {{{
 inoremap <[ å
@@ -473,9 +484,9 @@ if !has('nvim') " not needed in neovim (AFAIK)
 endif
 " }}}
 
-" --------------------------------------------------------------------------}}}
+" ==========================================================================}}}
 
-" SUBMODES -----------------------------------------------------------------{{{
+" SUBMODES ================================================================={{{
 
 " hsplit-resize ------------------------------------------------------------{{{
 " (h)split:
@@ -485,4 +496,4 @@ call submode#map('hsplit-resize', 'n', '', '-', '<C-W>-')
 call submode#map('hsplit-resize', 'n', '', '=', '<C-W>+')
 " --------------------------------------------------------------------------}}}
 
-" --------------------------------------------------------------------------}}}
+" ==========================================================================}}}
