@@ -8,23 +8,22 @@
 call plug#begin('~/.vim/plugins')
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'pangloss/vim-javascript', { 'for': 'js' }
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'itchyny/lightline.vim'
 Plug 'lervag/vimtex'
 Plug 'kana/vim-submode' | Plug '/home/john/.vim/dev/plugins/jumpinline.vim'
-Plug 'KabbAmine/vCoolor.vim'
+Plug 'KabbAmine/vCoolor.vim' " color selector
 Plug 'ap/vim-css-color'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-repeat' " repeat more things with .
 Plug 'majutsushi/tagbar'
 Plug 'chrisbra/NrrwRgn'
 Plug 'jocap/vim-interestingwords' " <leader>k, <leader>K
 Plug 'wesQ3/vim-windowswap'
 Plug 'pangloss/vim-javascript'
-Plug 'junegunn/vader.vim'
-Plug 'tpope/vim-obsession'
+Plug 'junegunn/vader.vim' " tests
+Plug 'tpope/vim-obsession' " session management (:Obsess <filename>)
+Plug 'plasticboy/vim-markdown'
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim'
@@ -73,7 +72,7 @@ nnoremap <silent> <space>h :<C-U>History<CR>
 nnoremap <silent> <space>c :<C-U>call fzf#vim#command_history({'right': '40'})<CR>
 nnoremap <silent> <space>, :<C-U>call fzf#vim#search_history({'right': '40'})<CR>
 
-inoremap <c-x><c-l> <plug>(fzf-complete-line)
+inoremap <c-x><c-l> <Esc>:<C-U><plug>(fzf-complete-line)<CR>
 
 let g:fzf_action = {
     \ 'ctrl-t': 'tab split',
@@ -91,6 +90,7 @@ endif
 
 " UltiSnips {{{
 let g:UltiSnipsSnippetDirectories = ['~/.vim/UltiSnips', 'UltiSnips']
+let g:UltiSnipsEditSplit='vertical'
 nnoremap <silent> <leader>s :<C-U>call UltiSnips#ListSnippets()<CR>
 " }}}
 
@@ -140,6 +140,7 @@ set mouse=a           " mouse mode
 set foldmethod=marker " use markers to fold (three curly braces)
 set ruler             " show line number, position in line, etc.
 set hidden            " allow buffers to be hidden
+set nojoinspaces      " disable double-spacing sentences when using shift-j
 let mapleader = ","
 let maplocalleader = "\\" " \
 
@@ -199,7 +200,7 @@ endif
 set ts=4 sts=4 sw=4 expandtab
 set smartindent
 set autoindent
-set wrap
+set nowrap
 set textwidth=79
 set formatoptions=cqn2j " auto-wrap comments,
                         " allow gq,
@@ -214,34 +215,48 @@ set formatoptions=cqn2j " auto-wrap comments,
 " GRAPHICAL OPTIONS ========================================================{{{
 syntax on
 filetype plugin indent on
-set background=dark
 set cursorline
 
 set colorcolumn=80
 let &colorcolumn=join(range(80,999),",")
 
+" The following could be done with autocmd, but less flexibly.
+
 let g:dark_color = 'jellybeans'
-let g:dark_color_options = [
-\ 'hi CursorLine cterm=NONE ctermfg=NONE ctermbg=237',
-\ 'hi ColorColumn ctermbg=234',
-\ 'hi MatchParen cterm=bold ctermbg=none ctermfg=226',
-\ 'hi WildMenu ctermbg=17 ctermfg=3'
-\ ]
+function! DarkColorOptions()
+    set background=dark
+    hi CursorLine cterm=NONE ctermfg=NONE ctermbg=237
+    hi ColorColumn ctermbg=234
+    hi MatchParen cterm=bold ctermbg=NONE ctermfg=226
+    "                                       yellow1 ^
+    hi WildMenu ctermbg=17 ctermfg=3
+    " (NrrwRgn) navyblue ^   olive ^
+endfunction
 
 let g:light_color = 'calmar256-light'
-let g:light_color_options = [
-\ 'hi ColorColumn ctermbg=229',
-\ 'hi MatchParen cterm=bold ctermbg=223 ctermfg=88'
-\ ]
+function! LightColorOptions()
+    set background=light
+    hi ColorColumn ctermbg=229
+    "                 wheat1 ^
+    hi MatchParen cterm=bold ctermbg=223 ctermfg=88
+    "                      navajowhite ^  darkred ^
+endfunction
+
+let g:alt_color = 'solarized-light'
+
+function! ColorOptions()
+    hi SpellBad cterm=underline ctermfg=1 ctermbg=NONE
+    "                            maroon ^
+    hi SpellLocal cterm=underline ctermfg=6 ctermbg=NONE
+    "                                teal ^
+endfunction
 
 " ==========================================================================}}}
 
 " AUTOCMD =================================================================={{{
 if has("autocmd")
-    au VimResized * :wincmd = " resize splits when window is resized
-
     " Remember last location in file:
-    au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
         \| exe "normal! g'\"" | endif
 
     " Format options:
@@ -252,20 +267,25 @@ if has("autocmd")
     autocmd User VimtexEventCompileStopped,VimtexEventQuit call KillViewer()
     " ^ kill pdf viewer when compilation stops or latex file is closed
 
-    " File types {{{
+    " Markdown files:
+    augroup markdown
+        autocmd FileType markdown highlight NbSp ctermfg=8
+        autocmd FileType markdown match NbSp /&nbsp;/
+        autocmd BufWinEnter markdown match NbSp /&nbsp;/
+    augroup END
+
+    " Setup filetypes {{{
     augroup filetypes
         autocmd BufNewFile,BufRead *.rss setfiletype xml
-        autocmd BufRead,BufNewFile *.less,*.css setfiletype css
-        autocmd BufRead,BufNewFile *.haml set ft=haml
-        autocmd BufRead,BufNewFile *.go set ft=go
-        autocmd BufRead,BufNewFile *.gss set ft=css
+        autocmd BufNewFile,BufRead *.gss set ft=css
     augroup END " }}}
 
     " Only show cursorline in the current window and in normal mode {{{
     augroup cline
-        au!
-        au WinLeave,InsertEnter * set nocursorline
-        au WinEnter,InsertLeave * set cursorline
+        autocmd!
+        " ^ remove current autocmds from group
+        autocmd WinLeave,InsertEnter * set nocursorline
+        autocmd WinEnter,InsertLeave * set cursorline
     augroup END " }}}
 
     " Neovim-specific {{{
@@ -284,8 +304,8 @@ let g:myLangList = ['nospell', 'en_gb', 'sv']
 function! SpellCheck()
   " loop through languages:
   if g:myLang == 0 | setlocal nospell | endif
-  if g:myLang == 1 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
-  if g:myLang == 2 | let &l:spelllang = g:myLangList[g:myLang] | setlocal spell | endif
+  if g:myLang == 1 | let &spelllang = g:myLangList[g:myLang] | setlocal spell | endif
+  if g:myLang == 2 | let &spelllang = g:myLangList[g:myLang] | setlocal spell | endif
   echomsg 'language:' g:myLangList[g:myLang]
   let g:myLang = g:myLang + 1
   if g:myLang >= len(g:myLangList) | let g:myLang = 0 | endif
@@ -298,46 +318,44 @@ function! KillViewer()
 endfunction
 " --------------------------------------------------------------------------}}}
 
-" Set spell check colors (for colorschemes without sensible defaults) ----{{{
-function! SetSpellColors()
-    hi SpellBad cterm=underline ctermfg=red ctermbg=NONE
-    hi SpellLocal cterm=underline ctermfg=blue ctermbg=NONE
-endfunction
-" --------------------------------------------------------------------------}}}
-
 " At day, use light color - other times, use dark color --------------------{{{
 " (to change manually, see mappings <leader>td and <leader>tl)
 function! SetColor(which)
-    let l:color_options = []
     if a:which == 'dark'
-        let l:color = g:dark_color
-        if exists('g:dark_color_options')
-            let l:color_options = g:dark_color_options
+        execute 'colorscheme ' . g:dark_color
+        if exists('*DarkColorOptions')
+            call DarkColorOptions()
         endif
     elseif a:which == 'light'
-        let l:color = g:light_color
-        if exists('g:light_color_options')
-            let l:color_options = g:light_color_options
+        execute 'colorscheme ' . g:light_color
+        if exists('*LightColorOptions')
+            call LightColorOptions()
+        endif
+    elseif a:which == 'alt'
+        execute 'colorscheme ' . g:alt_color
+        if exists('*AltColorOptions')
+            call AltColorOptions()
         endif
     endif
-    execute 'colorscheme ' . l:color
-    for option in l:color_options
-        execute option
-    endfor
 
-    call SetSpellColors()
+    if exists('*ColorOptions')
+        call ColorOptions()
+    endif
+
+    " Refresh buffers:
+"    silent bufdo e!
 endfunction
 function! AutoSetColor()
-    let l:hour = system('date +%H')
+    let hour = system('date +%H')
     if system('which sun') =~ 'not found' " sun script not found
-        if (l:hour >= 6 && l:hour <= 18) " default hours (spring)
+        if (hour >= 6 && hour <= 18) " default hours (spring)
             call SetColor('light')
         else
             call SetColor('dark')
         endif
     else " sun script found
-        if (l:hour >= str2nr(system('sun rise'))
-        \ && l:hour <= str2nr(system('sun set')))
+        if (hour >= str2nr(system('sun rise'))
+        \ && hour <= str2nr(system('sun set')))
             call SetColor('light')
         else
             call SetColor('dark')
@@ -349,26 +367,26 @@ call AutoSetColor()
 
 " Create pretty fold on current line (doesn't work everywhere yet) -------{{{
 function! CreateFold(...)
-    let l:close =  a:0 >= 1 ? a:1 : 0 " a:0 = no of arguments, a:1 = 1st argument
-    let l:indent = a:0 >= 2 ? a:2 : -1
-    let l:line1 = a:0 >= 3 ? a:3 : -1
-    let l:line2 = a:0 >= 4 ? a:4 : -1
+    let close =  a:0 >= 1 ? a:1 : 0 " a:0 = no of arguments, a:1 = 1st argument
+    let indent = a:0 >= 2 ? a:2 : -1
+    let line1 = a:0 >= 3 ? a:3 : -1
+    let line2 = a:0 >= 4 ? a:4 : -1
 
-    if l:line1 > 0
-        call cursor(l:line1, 0)
+    if line1 > 0
+        call cursor(line1, 0)
     endif
 
-    let l:lineno = getpos('.')[1] " line number
+    let lineno = getpos('.')[1] " line number
 
-    if l:indent == -1
-        let l:indent = substitute(getline('.'), '^\(\s*\)\(.\{-}\)\s*$', '\1', '')
+    if indent == -1
+        let indent = substitute(getline('.'), '^\(\s*\)\(.\{-}\)\s*$', '\1', '')
     endif
 
-    if l:close == 1
+    if close == 1
         " {{{
-        call setline(l:lineno, l:indent . '----------------------------------------------------------------------------}}}')
+        call setline(lineno, indent . '----------------------------------------------------------------------------}}}')
     else
-        call setline(l:lineno, l:indent . '----------------------------------------------------------------------------{{{')
+        call setline(lineno, indent . '----------------------------------------------------------------------------{{{')
         " }}}
     end
 
@@ -380,15 +398,15 @@ function! CreateFold(...)
     endwhile
 
 
-    if l:close == 0
+    if close == 0
         " Create closing fold marker below:
-        if l:line2 > -1
-            call cursor(l:line2, 0)
+        if line2 > -1
+            call cursor(line2, 0)
         endif
         normal! o
-        call CreateFold(1, l:indent)
-        if l:line1 > -1
-            call cursor(l:line1, 0)
+        call CreateFold(1, indent)
+        if line1 > -1
+            call cursor(line1, 0)
         else
             normal! k
         endif
@@ -402,10 +420,10 @@ endfunction
 
 " Wrap selection in pretty fold (using CreateFold()) -----------------------{{{
 function! WrapInFold()
-    let l:line1 = line("'<")
-    let l:line2 = line("'>")
+    let line1 = line("'<")
+    let line2 = line("'>")
 
-    let l:lines = line("'>") - line("'<") + 1 " no of lines selected
+    let lines = line("'>") - line("'<") + 1 " no of lines selected
 
     call cursor(line("'<"), 0)
     normal! O
@@ -415,7 +433,7 @@ endfunction
 
 " ==========================================================================}}}
 
-" MAPPINGS ================================================================={{{
+" MAPPINGS & COMMANDS ======================================================{{{
 
 noremap ; :
 noremap ' ;
@@ -427,15 +445,17 @@ nnoremap <silent> <leader>r :so $MYVIMRC<CR>:noh<CR>
 nnoremap <silent> <leader>l :<C-U>set list!<CR>
 " ^ display list invisible characters
 nnoremap <silent> <leader><space> :<C-U>noh<CR>
-" ^ unhighlight matches
+" ^ toggle highlighting of search matches
 nnoremap <leader>w gq}
 " ^ wrap paragraph
 inoremap <CR> <Esc>
 " ^ use <CR> as <Esc> (use <C>-<CR> to create new line in insert mode)
+command! Vrc tabnew ~/.vim/vimrc
 
 " Switch color schemes (light/dark):
 nnoremap <silent> <leader>tl :<C-U>call SetColor('light')<CR>
 nnoremap <silent> <leader>td :<C-U>call SetColor('dark')<CR>
+nnoremap <silent> <leader>ta :<C-U>call SetColor('alt')<CR>
 
 " Spell check:
 noremap <silent> <F2> :<C-U>call SpellCheck()<CR>
