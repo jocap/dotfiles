@@ -60,7 +60,7 @@ endif
 
 " deoplete {{{
 if has('nvim')
-    let g:deoplete#enable_at_startup = 1
+    let g:deoplete#enable_at_startup = 0 " temporary
 endif
 " }}}
 
@@ -220,36 +220,47 @@ set cursorline
 set colorcolumn=80
 let &colorcolumn=join(range(80,999),",")
 
+" Colorscheme setup --------------------------------------------------------{{{
 " The following could be done with autocmd, but less flexibly.
 
 let g:dark_color = 'jellybeans'
 function! DarkColorOptions()
-    set background=dark
     hi CursorLine cterm=NONE ctermfg=NONE ctermbg=237
     hi ColorColumn ctermbg=234
     hi MatchParen cterm=bold ctermbg=NONE ctermfg=226
-    "                                       yellow1 ^
     hi WildMenu ctermbg=17 ctermfg=3
-    " (NrrwRgn) navyblue ^   olive ^
+    if TerminalColor() == 'solarized-light'
+        highlight NbSp ctermfg=238
+    endif
 endfunction
 
 let g:light_color = 'calmar256-light'
 function! LightColorOptions()
-    set background=light
     hi ColorColumn ctermbg=229
-    "                 wheat1 ^
     hi MatchParen cterm=bold ctermbg=223 ctermfg=88
-    "                      navajowhite ^  darkred ^
+    if TerminalColor() == 'solarized-light'
+        highlight NbSp ctermfg=253 ctermbg=230
+    endif
 endfunction
 
 let g:alt_color = 'solarized-light'
+function! AltColorOptions()
+    if TerminalColor() == 'solarized-light'
+        highlight NbSp ctermfg=253 ctermbg=255
+    endif
+endfunction
 
+" Options for all colorschemes:
 function! ColorOptions()
     hi SpellBad cterm=underline ctermfg=1 ctermbg=NONE
-    "                            maroon ^
     hi SpellLocal cterm=underline ctermfg=6 ctermbg=NONE
-    "                                teal ^
+
+    " Default NbSp highlighting:
+    if TerminalColor() != 'solarized-light'
+        highlight NbSp ctermfg=8
+    endif
 endfunction
+" --------------------------------------------------------------------------}}}
 
 " ==========================================================================}}}
 
@@ -269,7 +280,7 @@ if has("autocmd")
 
     " Markdown files:
     augroup markdown
-        autocmd FileType markdown highlight NbSp ctermfg=8
+        autocmd FileType markdown setlocal fo+=t
         autocmd FileType markdown match NbSp /&nbsp;/
         autocmd BufWinEnter markdown match NbSp /&nbsp;/
     augroup END
@@ -315,6 +326,15 @@ endfunction
 " Kill PDF viewer (for vimtex) -------------------------------------------{{{
 function! KillViewer()
     call system('killall mupdf 2> /dev/null')
+endfunction
+" --------------------------------------------------------------------------}}}
+
+" Returns what colorscheme terminal is using (if available) ----------------{{{
+" (Created very much for my own personal setup)
+function! TerminalColor()
+    if filereadable(expand('~/.tmp/xfce-color'))
+        return readfile(expand('~/.tmp/xfce-color'))[0]
+    endif
 endfunction
 " --------------------------------------------------------------------------}}}
 
@@ -447,10 +467,11 @@ nnoremap <silent> <leader>l :<C-U>set list!<CR>
 nnoremap <silent> <leader><space> :<C-U>noh<CR>
 " ^ toggle highlighting of search matches
 nnoremap <leader>w gq}
-" ^ wrap paragraph
+" ^ wrap till end of paragraph
 inoremap <CR> <Esc>
 " ^ use <CR> as <Esc> (use <C>-<CR> to create new line in insert mode)
 command! Vrc tabnew ~/.vim/vimrc
+" ^ edit vimrc in new tab
 
 " Switch color schemes (light/dark):
 nnoremap <silent> <leader>tl :<C-U>call SetColor('light')<CR>
