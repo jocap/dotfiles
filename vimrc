@@ -9,25 +9,25 @@ call plug#begin('~/.vim/plugins')
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'scrooloose/nerdcommenter'
+Plug 'tpope/vim-commentary'
 Plug 'itchyny/lightline.vim'
-Plug 'lervag/vimtex'
+Plug 'lervag/vimtex', { 'for': 'tex' }
 Plug 'kana/vim-submode' | Plug '/home/john/.vim/dev/plugins/jumpinline.vim'
-Plug 'KabbAmine/vCoolor.vim' " color selector
-Plug 'ap/vim-css-color'
+Plug 'KabbAmine/vCoolor.vim', { 'for': 'css' } " color selector
+Plug 'ap/vim-css-color', { 'for': 'css' }
 Plug 'tpope/vim-repeat' " repeat more things with .
 Plug 'majutsushi/tagbar'
 Plug 'chrisbra/NrrwRgn'
 Plug 'jocap/vim-interestingwords' " <leader>k, <leader>K
 Plug 'wesQ3/vim-windowswap'
-Plug 'pangloss/vim-javascript'
-Plug 'junegunn/vader.vim' " tests
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'html'] }
+Plug 'junegunn/vader.vim', { 'for': 'vader' } " tests
 Plug 'tpope/vim-obsession' " session management (:Obsess <filename>)
-Plug 'plasticboy/vim-markdown'
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+Plug 'tpope/vim-surround'
 
 if has('nvim')
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'SirVer/ultisnips' | Plug 'jocap/vim-snippets'
+    Plug 'jocap/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
 call plug#end()
 
@@ -40,14 +40,6 @@ let g:NERDTreeWinSize = 30
 nnoremap <silent> <C-f> :<C-U>NERDTreeToggle<CR><C-l>
 " }}}
 
-" NERDcommenter {{{
-let g:NERDSpaceDelims = 1
-:let g:NERDCustomDelimiters = {
-\ 'html': { 'left': '<!-- ', 'right': '-->', 'leftAlt': '/*', 'rightAlt': '*/' }
-\ }
-" ^ html files: html comments + alt. css/javascript comments
-" }}}
-
 " vimtex {{{
 let g:tex_flavor = 'latex' " not specific to vimtex, but good nonetheless
 let g:vimtex_format_enabled = 1 " make gq work properly
@@ -58,35 +50,40 @@ if has("nvim")
 endif
 " }}}
 
-" deoplete {{{
-if has('nvim')
-    let g:deoplete#enable_at_startup = 0 " temporary
-endif
-" }}}
+" fzf ----------------------------------------------------------------------{{{
 
-" fzf {{{
-nnoremap <silent> <space><space> :<C-U>Files<CR>
-nnoremap <silent> <space>b :<C-U>Buffers<CR>
-nnoremap <silent> <space>l :<C-U>BLines<CR>
-nnoremap <silent> <space>h :<C-U>History<CR>
-nnoremap <silent> <space>c :<C-U>call fzf#vim#command_history({'right': '40'})<CR>
-nnoremap <silent> <space>, :<C-U>call fzf#vim#search_history({'right': '40'})<CR>
+" Mappings:
 
-inoremap <c-x><c-l> <Esc>:<C-U><plug>(fzf-complete-line)<CR>
+nnoremap <silent> <space><space> :<C-U>Files<CR><C-\><C-N>:<C-U>setlocal statusline=%#Normal#<CR>i
+nnoremap <silent> <space>b :<C-U>Buffers<CR><C-\><C-N>:<C-U>setlocal statusline=%#Normal#<CR>i
+nnoremap <silent> <space>l :<C-U>BLines<CR><C-\><C-N>:<C-U>setlocal statusline=%#Normal#<CR>i
+nnoremap <silent> <space>h :<C-U>History<CR><C-\><C-N>:<C-U>setlocal statusline=%#Normal#<CR>i
+nnoremap <silent> <space>c :<C-U>call fzf#vim#command_history({'right': '40'})<CR><C-\><C-N>:<C-U>setlocal statusline=%#Normal#<CR>i
+nnoremap <silent> <space>, :<C-U>call fzf#vim#search_history({'right': '40'})<CR><C-\><C-N>:<C-U>setlocal statusline=%#Normal#<CR>i
+
+" Actions:
 
 let g:fzf_action = {
     \ 'ctrl-t': 'tab split',
     \ 'ctrl-s': 'split',
     \ 'ctrl-v': 'vsplit' }
 
-if has('nvim')
-    let g:fzf_layout = { 'window': 'enew' }
-    " ^ open fzf buffer in whole window
+" Completion:
 
-    let g:fzf_nvim_statusline = 0
-    " ^ hide ugly statusline
-endif
-" }}}
+let g:custom_fzf_completion_layout = {
+    \ 'options': '--multi --reverse',
+    \ 'right': 19 }
+
+inoremap <expr> <c-x><c-k> fzf#complete(extend(
+\ { 'source':  'cat /usr/share/dict/words' },
+\ g:custom_fzf_completion_layout))
+inoremap <expr> <c-x><c-s> fzf#complete(extend(
+\ { 'source':  'cat /usr/share/dict/svenska' },
+\ g:custom_fzf_completion_layout))
+
+imap <c-x><c-l> <plug>(fzf-complete-line)
+
+" --------------------------------------------------------------------------}}}
 
 " UltiSnips {{{
 let g:UltiSnipsSnippetDirectories = ['~/.vim/UltiSnips', 'UltiSnips']
@@ -368,14 +365,14 @@ endfunction
 function! AutoSetColor()
     let hour = system('date +%H')
     if system('which sun') =~ 'not found' " sun script not found
-        if (hour >= 6 && hour <= 18) " default hours (spring)
+        if (hour >= 6 && hour < 18) " default hours (spring)
             call SetColor('light')
         else
             call SetColor('dark')
         endif
     else " sun script found
         if (hour >= str2nr(system('sun rise'))
-        \ && hour <= str2nr(system('sun set')))
+        \ && hour < str2nr(system('sun set')))
             call SetColor('light')
         else
             call SetColor('dark')
@@ -409,8 +406,9 @@ function! CreateFold(...)
         call setline(lineno, indent . '----------------------------------------------------------------------------{{{')
         " }}}
     end
-
-    call NERDComment('n', 'comment') " comment the line properly
+    
+    " Comment out line (using vim-commentary):
+    normal gcc
 
     " Remove -'s until length of line (without whitespace) <= textwidth:
     while strlen(substitute(getline('.'), '^\s*\(.\{-}\)\s*$', '\1', '')) > &textwidth
@@ -512,6 +510,7 @@ noremap \| =
 " ==========================================================================}}}
 
 " Swedish letters {{{
+inoremap =e é
 inoremap <[ å
 inoremap <' ä
 inoremap <; ö
