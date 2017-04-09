@@ -6,27 +6,30 @@
 
 " Loading ------------------------------------------------------------------{{{
 call plug#begin('~/.vim/plugins')
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" Extensions:
 Plug 'tpope/vim-commentary'
-Plug 'itchyny/lightline.vim'
-Plug 'lervag/vimtex', { 'for': 'tex' }
-Plug 'kana/vim-submode' | Plug '/home/john/.vim/dev/plugins/jumpinline.vim'
-Plug 'KabbAmine/vCoolor.vim', { 'for': 'css' } " color selector
-Plug 'ap/vim-css-color', { 'for': 'css' }
-Plug 'tpope/vim-repeat' " repeat more things with .
-Plug 'majutsushi/tagbar'
-Plug 'chrisbra/NrrwRgn'
-Plug 'jocap/vim-interestingwords' " <leader>k, <leader>K
-Plug 'wesQ3/vim-windowswap'
-Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'html'] }
-Plug 'junegunn/vader.vim', { 'for': 'vader' } " tests
-Plug 'tpope/vim-obsession' " session management (:Obsess <filename>)
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
-
+Plug 'kana/vim-submode' | Plug '/home/john/.vim/dev/plugins/jumpinline.vim'
+" Tools:
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-obsession' " session management (:Obsess <filename>)
+Plug 'junegunn/vader.vim', { 'for': 'vader' } " tests
+Plug 'chrisbra/NrrwRgn'
+Plug 'wesQ3/vim-windowswap'
+Plug 'KabbAmine/vCoolor.vim', { 'for': 'css' } " color selector
+Plug 'jocap/vim-interestingwords' " <leader>k, <leader>K
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'majutsushi/tagbar'
+Plug 'itchyny/lightline.vim'
+" Modes:
+Plug 'lervag/vimtex', { 'for': 'tex' }
+Plug 'ap/vim-css-color', { 'for': 'css' }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'html'] }
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+" Neovim:
 if has('nvim')
     Plug 'jocap/vim-snippets' | Plug 'SirVer/ultisnips'
 endif
@@ -76,11 +79,9 @@ let g:custom_fzf_completion_layout = {
     \ 'right': 19 }
 
 inoremap <expr> <c-x><c-k> fzf#complete(extend(
-\ { 'source':  'cat /usr/share/dict/words' },
-\ g:custom_fzf_completion_layout))
+\ { 'source': 'cat /usr/share/dict/words' }, g:custom_fzf_completion_layout))
 inoremap <expr> <c-x><c-s> fzf#complete(extend(
-\ { 'source':  'cat /usr/share/dict/svenska' },
-\ g:custom_fzf_completion_layout))
+\ { 'source': 'cat /usr/share/dict/svenska' }, g:custom_fzf_completion_layout))
 
 imap <c-x><c-l> <plug>(fzf-complete-line)
 
