@@ -25,6 +25,7 @@ Plug 'junegunn/vader.vim', { 'for': 'vader' } " tests
 Plug 'tpope/vim-obsession' " session management (:Obsess <filename>)
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-surround'
+Plug 'wellle/targets.vim'
 
 if has('nvim')
     Plug 'jocap/vim-snippets' | Plug 'SirVer/ultisnips'
@@ -117,6 +118,10 @@ let g:nrrw_topbot_leftright = 'botright' " window appears on bottom/right
 " WindowSwap {{{
 let g:windowswap_map_keys = 0 " prevent default bindings
 nnoremap <silent> <space>ww :call WindowSwap#EasyWindowSwap()<CR>
+" }}}
+
+" lightline.vim {{{
+let g:lightline = { 'colorscheme': 'jellybeans' }
 " }}}
 
 " --------------------------------------------------------------------------}}}
@@ -220,40 +225,43 @@ let &colorcolumn=join(range(80,999),",")
 " Colorscheme setup --------------------------------------------------------{{{
 " The following could be done with autocmd, but less flexibly.
 
-let g:dark_color = 'jellybeans'
-function! DarkColorOptions()
+let s:dark_color = 'jellybeans'
+function! s:dark_color_options()
     hi CursorLine cterm=NONE ctermfg=NONE ctermbg=237
     hi ColorColumn ctermbg=234
     hi MatchParen cterm=bold ctermbg=NONE ctermfg=226
     hi WildMenu ctermbg=17 ctermfg=3
-    if TerminalColor() == 'solarized-light'
+    if s:terminal_color() == 'solarized-light'
         highlight NbSp ctermfg=238
     endif
+    call s:update_lightline_theme('jellybeans')
 endfunction
 
-let g:light_color = 'calmar256-light'
-function! LightColorOptions()
+let s:light_color = 'calmar256-light'
+function! s:light_color_options()
     hi ColorColumn ctermbg=229
     hi MatchParen cterm=bold ctermbg=223 ctermfg=88
-    if TerminalColor() == 'solarized-light'
+    if s:terminal_color() == 'solarized-light'
         highlight NbSp ctermfg=253 ctermbg=230
     endif
+    call s:update_lightline_theme('solarized')
 endfunction
 
-let g:alt_color = 'solarized-light'
-function! AltColorOptions()
-    if TerminalColor() == 'solarized-light'
+let s:alt_color = 'solarized-light'
+function! s:alt_color_options()
+    if s:terminal_color() == 'solarized-light'
         highlight NbSp ctermfg=253 ctermbg=255
     endif
+    call s:update_lightline_theme('solarized')
 endfunction
 
 " Options for all colorschemes:
-function! ColorOptions()
+function! s:color_options()
     hi SpellBad cterm=underline ctermfg=1 ctermbg=NONE
     hi SpellLocal cterm=underline ctermfg=6 ctermbg=NONE
 
     " Default NbSp highlighting:
-    if TerminalColor() != 'solarized-light'
+    if s:terminal_color() != 'solarized-light'
         highlight NbSp ctermfg=8
     endif
 endfunction
@@ -328,10 +336,19 @@ endfunction
 
 " Returns what colorscheme terminal is using (if available) ----------------{{{
 " (Created very much for my own personal setup)
-function! TerminalColor()
+function! s:terminal_color()
     if filereadable(expand('~/.tmp/xfce-color'))
         return readfile(expand('~/.tmp/xfce-color'))[0]
     endif
+endfunction
+" --------------------------------------------------------------------------}}}
+
+" Update lightline.vim theme -----------------------------------------------{{{
+function! s:update_lightline_theme(theme)
+    let g:lightline.colorscheme = a:theme
+    call lightline#init()
+    call lightline#colorscheme()
+    call lightline#update()
 endfunction
 " --------------------------------------------------------------------------}}}
 
@@ -339,24 +356,24 @@ endfunction
 " (to change manually, see mappings <leader>td and <leader>tl)
 function! SetColor(which)
     if a:which == 'dark'
-        execute 'colorscheme ' . g:dark_color
-        if exists('*DarkColorOptions')
-            call DarkColorOptions()
+        execute 'colorscheme ' . s:dark_color
+        if exists('*s:dark_color_options')
+            call s:dark_color_options()
         endif
     elseif a:which == 'light'
-        execute 'colorscheme ' . g:light_color
-        if exists('*LightColorOptions')
-            call LightColorOptions()
+        execute 'colorscheme ' . s:light_color
+        if exists('*s:light_color_options')
+            call s:light_color_options()
         endif
     elseif a:which == 'alt'
-        execute 'colorscheme ' . g:alt_color
-        if exists('*AltColorOptions')
-            call AltColorOptions()
+        execute 'colorscheme ' . s:alt_color
+        if exists('*s:alt_color_options')
+            call s:alt_color_options()
         endif
     endif
 
-    if exists('*ColorOptions')
-        call ColorOptions()
+    if exists('*s:color_options')
+        call s:color_options()
     endif
 
     " Refresh buffers:
