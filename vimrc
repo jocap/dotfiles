@@ -202,6 +202,8 @@ endif
 " Indentation and formatting {{{
 set ts=4 sts=4 sw=4 expandtab
 set smartindent
+inoremap # X<C-H>#
+" ^ prevent smartindent from de-indenting lines starting with #
 set autoindent
 set nowrap
 set textwidth=79
@@ -279,6 +281,9 @@ if has("autocmd")
     " Format options:
     autocmd FileType * setlocal fo-=r fo-=o
     " ^ don't add new comment on new line after comment
+
+    " Tabs (spaces):
+    autocmd Filetype python setlocal ts=2 sts=2 sw=2
 
     " vimtex:
     autocmd User VimtexEventCompileStopped,VimtexEventQuit call KillViewer()
@@ -381,9 +386,9 @@ function! SetColor(which)
 "    silent bufdo e!
 endfunction
 function! AutoSetColor()
-    let hour = system('date +%H')
+    let hour = system('date +%H.%M')
     if system('which sun') =~ 'not found' " sun script not found
-        if (hour >= 6 && hour < 18) " default hours (spring)
+        if (hour >= 6.00 && hour < 18.00) " default hours (spring)
             call SetColor('light')
         else
             call SetColor('dark')
@@ -488,6 +493,8 @@ inoremap <CR> <Esc>
 " ^ use <CR> as <Esc> (use <C>-<CR> to create new line in insert mode)
 command! Vrc tabnew ~/.vim/vimrc
 " ^ edit vimrc in new tab
+nnoremap <silent> <F12> :<C-U>syntax sync fromstart<CR>
+" ^ fix syntax highlighting on the fly
 
 " Switch color schemes (light/dark):
 nnoremap <silent> <leader>tl :<C-U>call SetColor('light')<CR>
