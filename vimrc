@@ -13,7 +13,7 @@ Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
 Plug 'kana/vim-submode' | Plug '/home/john/.vim/dev/plugins/jumpinline.vim'
 " Tools:
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-obsession' " session management (:Obsess <filename>)
 Plug 'junegunn/vader.vim', { 'for': 'vader' } " tests
@@ -130,10 +130,10 @@ let g:lightline = { 'colorscheme': 'jellybeans' }
 " ==========================================================================}}}
 
 " BASIC OPTIONS ============================================================{{{
+if &compatible | set nocompatible | endif
 set encoding=utf-8
 set undofile          " enable persistent undo
 set backup            " enable backups
-set nocompatible      " disable vi compatibility
 set nomodeline        " disable parsing of :set command at BOF and EOF
 set showcmd           " display command letters pressed in lower-right corner
 set laststatus=2      " always show status bar
@@ -183,9 +183,10 @@ endif
 " }}}
 
 " Directories {{{
-set undodir=~/.vim/tmp/undo/     " undo files
-set backupdir=~/.vim/tmp/backup/ " backups
-set directory=~/.vim/tmp/swap/   " swap files
+set undodir=~/.vim/tmp/undo/        " undo files
+set backupdir=~/.vim/tmp/backup/    " backups
+set directory=~/.vim/tmp/swap/      " swap files
+set viminfo+='1000,n~/.vim/.viminfo " .viminfo
 
 " -- Make those folders automatically if they don't already exist
 if !isdirectory(expand(&undodir))
