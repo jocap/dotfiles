@@ -2,6 +2,7 @@
 *.swp
 *~
 .session.vim
+.viminfo
 tmp/*
 plugins/*
 dev/*
